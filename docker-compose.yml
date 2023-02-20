@@ -1,0 +1,7 @@
+version: '3'
+services:
+  squawkmarketbackend:
+    build:
+      context: .
+    volumes:
+      - .:/app

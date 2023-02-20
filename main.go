@@ -44,13 +44,11 @@ func main() {
 	// api routes to your custom baseurl
 	server.MapHTTP(signalr.WithHTTPServeMux(router), "/feed")
 
-	// setup cors
-
-	if err := http.ListenAndServe(os.Getenv("SERVER_URL"), LogRequests(router)); err != nil {
+	log.Printf("Server starting, %s", os.Getenv("SERVER_URL"))
+	err = http.ListenAndServe(os.Getenv("SERVER_URL"), LogRequests(router))
+	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
-
-	log.Printf("Server started, %s", os.Getenv("SERVER_URL"))
 
 	// http.HandleFunc("/stream", websocket.HandleWebsocket)
 	// http.ListenAndServe(":8080", nil)

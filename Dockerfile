@@ -15,10 +15,10 @@ WORKDIR /app
 # Copy this app's .env file to the container's /app directory
 COPY .env /app/
 
-COPY --from=build-env /app/main /app/
-
 # also copy in the DB!
-COPY --from=build-env squawkmarketbackend.db /app/
+COPY squawkmarketbackend.db /app/
+
+COPY --from=build-env /app/main /app/
 
 # also add the timezone data
 ADD https://github.com/golang/go/raw/master/lib/time/zoneinfo.zip /zoneinfo.zip

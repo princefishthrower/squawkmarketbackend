@@ -50,6 +50,8 @@ func main() {
 		log.Fatal("ListenAndServe:", err)
 	}
 
+	log.Printf("Server started, %s", os.Getenv("SERVER_URL"))
+
 	// http.HandleFunc("/stream", websocket.HandleWebsocket)
 	// http.ListenAndServe(":8080", nil)
 

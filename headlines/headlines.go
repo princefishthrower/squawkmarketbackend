@@ -64,7 +64,6 @@ func GenerateAndStoreHeadlineIfNotExists(headline string, server signalr.Server)
 		return
 	}
 	if headlineExists {
-		log.Println("Headline already exists in database:", headline)
 		return
 	}
 

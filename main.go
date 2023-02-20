@@ -79,6 +79,14 @@ func main() {
 func LogRequests(h http.Handler) http.Handler {
 	// type our middleware as an http.HandlerFunc so that it is seen as an http.Handler
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// log all headers in the request
+		for name, headers := range r.Header {
+			for _, h := range headers {
+				log.Printf("I SEE HEADER: %v: %v", name, h)
+			}
+		}
+
 		// sample CORS handling
 		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("EXTERNAL_URL"))
 		w.Header().Set("Access-Control-Allow-Credentials", "true")

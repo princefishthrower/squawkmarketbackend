@@ -30,6 +30,8 @@ func main() {
 		signalr.SimpleHubFactory(hub),
 		signalr.KeepAliveInterval(2*time.Second),
 		signalr.Logger(kitlog.NewLogfmtLogger(os.Stderr), true),
+		signalr.InsecureSkipVerify(true),
+		signalr.AllowOriginPatterns([]string{"*"}),
 	)
 
 	// start headline scrape job using the server

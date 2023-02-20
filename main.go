@@ -42,9 +42,7 @@ func main() {
 	// api routes to your custom baseurl
 	server.MapHTTP(signalr.WithHTTPServeMux(router), "/feed")
 
-	// setup cors
-
-	if err := http.ListenAndServe(os.Getenv("SERVER_URL"), LogRequests(router)); err != nil {
+	if err := http.ListenAndServe(os.Getenv("SERVER_URL"), router); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 
@@ -72,21 +70,4 @@ func main() {
 	// }
 
 	// fmt.Println("Database and table initialized successfully.")
-}
-
-func LogRequests(h http.Handler) http.Handler {
-	// type our middleware as an http.HandlerFunc so that it is seen as an http.Handler
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// sample CORS handling
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-SignalR-User-Agent")
-		if r.Method == "OPTIONS" {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-
-		// serve the inner request
-		h.ServeHTTP(w, r)
-	})
 }

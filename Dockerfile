@@ -1,10 +1,12 @@
 FROM golang:alpine AS build-env
 
+RUN apk add build-base
+
 WORKDIR /app
 
 COPY . .
 
-RUN go build -o main .
+RUN CGO_ENABLED=1 go build -o main .
 
 FROM alpine
 

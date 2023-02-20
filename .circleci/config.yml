@@ -4,8 +4,6 @@ workflows:
   release_main:
     jobs:
       - main:
-          context:
-            - WheelScreener
           filters:
             branches:
               only:

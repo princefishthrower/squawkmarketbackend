@@ -22,7 +22,9 @@ func (h *AppHub) OnConnected(connectionID string) {
 		fmt.Printf("Error getting latest headline: %s", err)
 		return
 	}
-	h.Clients().Group("group").Send("freeFeedMessage", headline)
+
+	// send the headline only to the client that just connected
+	h.Clients().Client(connectionID).Send("freeFeedMessage", headline)
 }
 
 func (h *AppHub) OnDisconnected(connectionID string) {

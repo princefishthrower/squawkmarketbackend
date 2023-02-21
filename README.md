@@ -2,6 +2,12 @@
 
 The go based backend for the squawkmarket app. A sub-second latency stock market squawk box.
 
+## Run Tests
+
+```bash
+go test -p 1 -v ./tests
+```
+
 ## Migrations
 
 Migrations are managed by [golang-migrate](https://github.com/golang-migrate/migrate)

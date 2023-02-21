@@ -19,4 +19,4 @@ jobs:
               - "b2:6c:4a:40:5d:d4:ea:93:72:bb:84:1f:52:c2:0b:f2"
       - run:
           name: SSH into server and rebuild docker image, replacing old image
-          command: ssh -o StrictHostKeyChecking=no $USER@$SERVER 'cd projects && cd squawkmarketbackend && git pull && git checkout main && source .env.sh && docker build -t squawkmarketbackend:latest . && docker stop squawkmarketbackend && docker rm squawkmarketbackend && docker run --name squawkmarketbackend -d -p 8080:8080 squawkmarketbackend:latest'
+          command: ssh -o StrictHostKeyChecking=no $USER@$SERVER 'cd projects && cd squawkmarketbackend && git pull && git checkout main && source .env.sh && docker build -t squawkmarketbackend:latest . && docker stop squawkmarketbackend && docker rm squawkmarketbackend && docker run --name squawkmarketbackend -d -p 8080:8080 squawkmarketbackend'

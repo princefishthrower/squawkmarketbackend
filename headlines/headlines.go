@@ -26,7 +26,6 @@ func ParseHeadlines(server signalr.Server) {
 }
 
 func ParseHeadline(url string, selector string) (*string, error) {
-
 	c := colly.NewCollector(
 		colly.AllowedDomains("finviz.com", "finance.yahoo.com", "marketwatch.com", "reuters.com", "wsj.com"),
 	)

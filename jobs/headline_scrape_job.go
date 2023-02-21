@@ -1,19 +1,13 @@
 package jobs
 
 import (
-	"squawkmarketbackend/headlines"
+	"log"
+	"squawkmarketbackend/scraper"
 
 	"github.com/philippseith/signalr"
-	"github.com/robfig/cron/v3"
 )
 
-func StartHeadlineScrapeJob(server signalr.Server) {
-	// Run every 10 seconds
-	c := cron.New(cron.WithSeconds())
-	c.AddFunc("*/10 * * * * *", func() {
-		//  for each config in the slice of configs
-		headlines.ParseHeadlines(server)
-	})
-
-	c.Start()
+func StartFeedItemScrapeJob(server signalr.Server) {
+	log.Println("Starting Feed Item Scrape Job")
+	scraper.ParseFeedItems(server)
 }

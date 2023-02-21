@@ -2,7 +2,7 @@ package db
 
 import (
 	"database/sql"
-	headlinesTypes "squawkmarketbackend/headlines/types"
+	scraperTypes "squawkmarketbackend/scraper/types"
 	"squawkmarketbackend/utils"
 )
 
@@ -31,9 +31,9 @@ func GetHeadlines() ([]string, error) {
 	defer rows.Close()
 
 	// Loop through the results and print each headline
-	headlines := []headlinesTypes.Headline{}
+	headlines := []scraperTypes.Headline{}
 	for rows.Next() {
-		var h headlinesTypes.Headline
+		var h scraperTypes.Headline
 		err := rows.Scan(&h.Headline)
 		if err != nil {
 			return nil, err
@@ -78,33 +78,33 @@ func AddHeadline(headline string, mp3data []byte) error {
 	return nil
 }
 
-func GetLatestHeadline() (headlinesTypes.Headline, error) {
+func GetLatestHeadline() (scraperTypes.Headline, error) {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
-		return headlinesTypes.Headline{}, err
+		return scraperTypes.Headline{}, err
 	}
 	defer db.Close()
 
 	// Query the headlines table
 	rows, err := db.Query("SELECT * FROM headlines ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
-		return headlinesTypes.Headline{}, err
+		return scraperTypes.Headline{}, err
 	}
 	defer rows.Close()
 
 	// Loop through the results and print each headline
-	headlines := []headlinesTypes.Headline{}
+	headlines := []scraperTypes.Headline{}
 	for rows.Next() {
-		var h headlinesTypes.Headline
+		var h scraperTypes.Headline
 		err := rows.Scan(&h.ID, &h.CreatedAt, &h.Headline, &h.Mp3Data)
 		if err != nil {
-			return headlinesTypes.Headline{}, err
+			return scraperTypes.Headline{}, err
 		}
 		headlines = append(headlines, h)
 	}
 	if err = rows.Err(); err != nil {
-		return headlinesTypes.Headline{}, err
+		return scraperTypes.Headline{}, err
 	}
 
 	return headlines[0], nil

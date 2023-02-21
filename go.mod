@@ -35,6 +35,7 @@ require (
 
 require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
+	github.com/gocolly/colly v1.2.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/mattn/go-sqlite3 v1.14.16

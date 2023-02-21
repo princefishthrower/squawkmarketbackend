@@ -3,7 +3,7 @@ package hub
 import (
 	"fmt"
 	"squawkmarketbackend/db"
-	headlinesTypes "squawkmarketbackend/headlines/types"
+	scraperTypes "squawkmarketbackend/scraper/types"
 
 	"github.com/philippseith/signalr"
 )
@@ -37,6 +37,6 @@ func (h *AppHub) Broadcast(message string) {
 	h.Clients().Group("group").Send("freeFeedMessage", message)
 }
 
-func BroadcastHeadline(headline headlinesTypes.Headline, server signalr.Server) {
+func BroadcastHeadline(headline scraperTypes.Headline, server signalr.Server) {
 	server.HubClients().All().Send("freeFeedMessage", headline)
 }

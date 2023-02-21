@@ -1,55 +1,50 @@
-package headlines
+package scraper
 
 import (
 	"log"
 	"squawkmarketbackend/db"
 	"squawkmarketbackend/elevenlabs"
-	headlinesTypes "squawkmarketbackend/headlines/types"
 	"squawkmarketbackend/hub"
-	"squawkmarketbackend/utils"
+	scraperTypes "squawkmarketbackend/scraper/types"
+	"time"
 
 	"github.com/gocolly/colly/v2"
 	"github.com/philippseith/signalr"
 )
 
-func ParseHeadlines(server signalr.Server) {
-	for _, config := range headlinesTypes.HeadlineConfigs {
+func ParseFeedItems(server signalr.Server) {
+	for _, config := range scraperTypes.HeadlineConfigs {
 		// get the headline
-		headline, err := ParseHeadline(config.Url, config.Selector)
+		headline, err := ParseFeedItem(config.Url, config.Selector, config.HandlerFunction)
 		if err != nil {
 			log.Println("Error getting headline:", err)
 			return
 		}
+		log.Println("Headline found and parsed, from: ", config.Url, ": ", *headline)
 		// ship and store headline
-		GenerateAndStoreHeadlineIfNotExists(*headline, server)
+		GenerateAndStoreFeedItemIfNotExists(*headline, server)
+
+		// wait 1 second before scraping the next headline
+		time.Sleep(1 * time.Second)
 	}
+
+	// and then start all over again
+	ParseFeedItems(server)
 }
 
-func ParseHeadline(url string, selector string) (*string, error) {
+func ParseFeedItem(url string, selector string, onHtmlHandler func(*string, string) func(e *colly.HTMLElement)) (*string, error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("finviz.com", "finance.yahoo.com", "marketwatch.com", "reuters.com", "wsj.com"),
 	)
 
 	headline := ""
-	c.OnHTML(selector, func(e *colly.HTMLElement) {
-		// only get the first headline
-		if headline == "" {
-			headline = e.Text
-
-			// run headline cleaner utility
-			headline = utils.CleanHeadline(headline)
-
-			log.Println("Headline found and parsed, from: ", url, ": ", headline)
-			return
-		}
-	})
-
+	c.OnHTML(selector, onHtmlHandler(&headline, url))
 	c.Visit(url)
 
 	return &headline, nil
 }
 
-func GenerateAndStoreHeadlineIfNotExists(headline string, server signalr.Server) {
+func GenerateAndStoreFeedItemIfNotExists(headline string, server signalr.Server) {
 	// check if headline is already in database
 	headlineExists, err := db.DoesHeadlineExist(headline)
 	if err != nil {

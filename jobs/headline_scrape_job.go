@@ -9,5 +9,8 @@ import (
 
 func StartFeedItemScrapeJob(server signalr.Server) {
 	log.Println("Starting Feed Item Scrape Job")
-	scraper.ParseFeedItems(server)
+	// start in a goroutine so it doesn't block
+	go func() {
+		scraper.ParseFeedItems(server)
+	}()
 }

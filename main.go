@@ -36,6 +36,7 @@ func main() {
 
 	// start headline scrape job using the server
 	jobs.StartHeadlineScrapeJob(server)
+	jobs.StartHeartBeatJob()
 
 	// create a new http.ServerMux to handle your app's http requests
 	router := http.NewServeMux()

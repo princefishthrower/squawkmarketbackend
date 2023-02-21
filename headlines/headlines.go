@@ -6,6 +6,7 @@ import (
 	"squawkmarketbackend/elevenlabs"
 	headlinesTypes "squawkmarketbackend/headlines/types"
 	"squawkmarketbackend/hub"
+	"squawkmarketbackend/utils"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -35,15 +36,13 @@ func ParseHeadline(url string, selector string) (*string, error) {
 		// only get the first headline
 		if headline == "" {
 			headline = e.Text
-			// remove all leading and trailing whitespace
-			headline = strings.TrimSpace(headline)
 
-			// // remove all newlines and tabs
+			// remove all newlines and tabs
 			headline = strings.ReplaceAll(headline, "\n", "")
 			headline = strings.ReplaceAll(headline, "\t", "")
 
-			// // regex remove any 00:00AM / 00:00PM times (military time)
-			headline = strings.ReplaceAll(headline, "[0-9][0-9]:[0-9][0-9][AP]M", "")
+			// util function to remove timestamps
+			headline = utils.ReplaceTimestamps(headline)
 
 			log.Println("Headline found and parsed, from: ", url, ": ", headline)
 			return

@@ -19,4 +19,11 @@ func TestReplaceTimestamps(t *testing.T) {
 	if actual != expected {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}
+
+	headline = "04:35AM                Stock Futures Fall After Dow Posts Losses for Week"
+	expected = "Stock Futures Fall After Dow Posts Losses for Week"
+	actual = utils.ReplaceTimestamps(headline)
+	if actual != expected {
+		t.Errorf("Expected %s, got %s", expected, actual)
+	}
 }

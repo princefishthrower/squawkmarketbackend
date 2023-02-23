@@ -18,6 +18,9 @@ COPY .env /app/
 # also copy in the DB!
 COPY squawkmarketbackend.db /app/
 
+# also the google cloud credentials
+COPY squawk-market-credentials.json /app/
+
 COPY --from=build-env /app/main /app/
 
 # also add the timezone data

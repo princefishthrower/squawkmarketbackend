@@ -48,7 +48,13 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 	// If you are testing with the CLI, find the secret by running 'stripe listen'
 	// If you are using an endpoint defined with the API or dashboard, look in your webhook settings
 	// at https://dashboard.stripe.com/webhooks
-	endpointSecret := os.Getenv("STRIPE_WEBHOOK_SECRET")
+	endpointSecret := os.Getenv("STRIPE_WEBHOOK_SECRET_PRODUCTION")
+
+	// if the origin includes "staging", use the staging secret
+	if r.Header.Get("Origin") == "https://staging.squawkmarket.com" {
+		endpointSecret = os.Getenv("STRIPE_WEBHOOK_SECRET_STAGING")
+	}
+
 	signatureHeader := r.Header.Get("Stripe-Signature")
 	event, err := webhook.ConstructEvent(payload, signatureHeader, endpointSecret)
 	if err != nil {

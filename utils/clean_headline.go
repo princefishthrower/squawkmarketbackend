@@ -5,19 +5,27 @@ import (
 	"strings"
 )
 
-func CleanHeadline(headline string) string {
-	headline = strings.ReplaceAll(headline, "\n", "")
-	headline = strings.ReplaceAll(headline, "\t", "")
-	headline = strings.ReplaceAll(headline, "\r", "")
-	headline = strings.ReplaceAll(headline, "Exclusive:", "")
-	headline = strings.ReplaceAll(headline, "UPDATE 1-", "")
-	headline = strings.ReplaceAll(headline, "- sources", "")
-	headline = strings.ReplaceAll(headline, "-sources", "")
-	headline = strings.ReplaceAll(headline, "US STOCKS-", "US Stocks: ")
-	headline = strings.ReplaceAll(headline, "GLOBAL MARKETS-", "Global Markets: ")
-	headline = strings.ReplaceAll(headline, "---", " - ")
+// a last cleaner before the mp3 is generated
+func CleanSquawk(squawk string) string {
+	squawk = strings.ReplaceAll(squawk, "\n", "")
+	squawk = strings.ReplaceAll(squawk, "\t", "")
+	squawk = strings.ReplaceAll(squawk, "\r", "")
+	squawk = strings.ReplaceAll(squawk, "Exclusive:", "")
+	squawk = strings.ReplaceAll(squawk, "Exclusive-", "")
+	squawk = strings.ReplaceAll(squawk, "UPDATE 1-", "")
+	squawk = strings.ReplaceAll(squawk, "- sources", "")
+	squawk = strings.ReplaceAll(squawk, "-sources", "")
+	squawk = strings.ReplaceAll(squawk, "US STOCKS-", "US Stocks: ")
+	squawk = strings.ReplaceAll(squawk, "GLOBAL MARKETS-", "Global Markets: ")
+	squawk = strings.ReplaceAll(squawk, "SNAPSHOT", "")
+	squawk = strings.ReplaceAll(squawk, "EXPLAINER-", "")
+	squawk = strings.ReplaceAll(squawk, ": Markets Wrap", "")
+	squawk = strings.ReplaceAll(squawk, " mln ", " million ")
+	squawk = strings.ReplaceAll(squawk, "Global Markets:", "")
+	squawk = strings.ReplaceAll(squawk, "---", " - ")
 	m1 := regexp.MustCompile(`[0-9][0-9]:[0-9][0-9][AP]M`)
-	replaced := m1.ReplaceAllString(headline, "")
+	replaced := m1.ReplaceAllString(squawk, "")
+
 	// and trim any leading and trailing whitespace
 	return strings.TrimSpace(replaced)
 }

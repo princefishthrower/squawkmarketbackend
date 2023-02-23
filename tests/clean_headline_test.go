@@ -5,38 +5,38 @@ import (
 	"testing"
 )
 
-func TestCleanHeadline(t *testing.T) {
-	headline := "03:52AM HSBC Posts Higher Profit After Rise in Global Interest Rates"
+func TestCleanSquawk(t *testing.T) {
+	squawk := "03:52AM HSBC Posts Higher Profit After Rise in Global Interest Rates"
 	expected := "HSBC Posts Higher Profit After Rise in Global Interest Rates"
-	actual := utils.CleanHeadline(headline)
+	actual := utils.CleanSquawk(squawk)
 	if actual != expected {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}
 
-	headline = "  19:49PM Exclusive: Warburg Pincus raising $439 mln in maiden yuan fund for China deals -sources   "
+	squawk = "  19:49PM Exclusive: Warburg Pincus raising $439 mln in maiden yuan fund for China deals -sources   "
 	expected = "Warburg Pincus raising $439 mln in maiden yuan fund for China deals"
-	actual = utils.CleanHeadline(headline)
+	actual = utils.CleanSquawk(squawk)
 	if actual != expected {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}
 
-	headline = "04:35AM                Stock Futures Fall After Dow Posts Losses for Week"
+	squawk = "04:35AM                Stock Futures Fall After Dow Posts Losses for Week"
 	expected = "Stock Futures Fall After Dow Posts Losses for Week"
-	actual = utils.CleanHeadline(headline)
+	actual = utils.CleanSquawk(squawk)
 	if actual != expected {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}
 
-	headline = "Exclusive: Warburg Pincus raising $439 mln in maiden yuan fund for China deals - sources"
+	squawk = "Exclusive: Warburg Pincus raising $439 mln in maiden yuan fund for China deals - sources"
 	expected = "Warburg Pincus raising $439 mln in maiden yuan fund for China deals"
-	actual = utils.CleanHeadline(headline)
+	actual = utils.CleanSquawk(squawk)
 	if actual != expected {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}
 
-	headline = "UPDATE 1-Europe's carbon price hits record high of 100 euros"
+	squawk = "UPDATE 1-Europe's carbon price hits record high of 100 euros"
 	expected = "Europe's carbon price hits record high of 100 euros"
-	actual = utils.CleanHeadline(headline)
+	actual = utils.CleanSquawk(squawk)
 	if actual != expected {
 		t.Errorf("Expected %s, got %s", expected, actual)
 	}

@@ -6,14 +6,14 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func HeadlineHandler(headline *string, url string) func(e *colly.HTMLElement) {
+func HeadlineHandler(squawk *string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
 		// only get the first headline
-		if *headline == "" {
-			*headline = e.Text
+		if *squawk == "" {
+			*squawk = e.Text
 
-			// run headline cleaner utility
-			*headline = utils.CleanHeadline(*headline)
+			// run squawk cleaner utility
+			*squawk = utils.CleanSquawk(*squawk)
 			return
 		}
 	}

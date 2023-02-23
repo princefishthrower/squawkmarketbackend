@@ -6,10 +6,10 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func NewHighHandler(headline *string, url string) func(e *colly.HTMLElement) {
+func NewHighHandler(squawk *string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
-		// only get the first headline
-		if *headline == "" {
+		// only get the first row of the table
+		if *squawk == "" {
 			// loop at all td's in the element
 			tdTexts := []string{}
 			e.ForEach("td", func(_ int, e *colly.HTMLElement) {
@@ -23,10 +23,10 @@ func NewHighHandler(headline *string, url string) func(e *colly.HTMLElement) {
 				return
 			}
 
-			*headline = "New high: " + tdTexts[2] + ", symbol " + tdTexts[1] + ", at $" + tdTexts[8] + ", up " + tdTexts[9] + "."
+			*squawk = "New high: " + tdTexts[2] + ", symbol " + tdTexts[1] + ", at $" + tdTexts[8] + ", up " + tdTexts[9] + "."
 
-			// run headline cleaner utility
-			*headline = utils.CleanHeadline(*headline)
+			// run squawk cleaner utility
+			*squawk = utils.CleanSquawk(*squawk)
 			return
 		}
 	}

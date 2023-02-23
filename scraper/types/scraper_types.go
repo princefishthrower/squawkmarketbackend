@@ -6,105 +6,158 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type Headline struct {
-	ID        int    `json:"id"`
-	CreatedAt string `json:"created_at"`
-	Headline  string `json:"headline"`
-	Mp3Data   []byte `json:"mp3data"`
-}
-
-type HeadlineConfig struct {
+type ScrapingConfig struct {
 	Url             string
 	Selector        string
 	HandlerFunction func(*string, string) func(*colly.HTMLElement)
+	FeedName        string
+	InsertThreshold float64
 }
 
-// define a const config of type slice HeadlineConfig for each of the news sources
-var MarketWatchConfig = HeadlineConfig{
+// define a const config of type slice ScrapingConfig for each of the news sources
+var MarketWatchNewsConfig = ScrapingConfig{
 	Url:             "https://marketwatch.com/latest-news",
 	Selector:        "h3.article__headline",
 	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
 }
 
-var WallStreetJournalConfig = HeadlineConfig{
+var WallStreetJournalNewsConfig = ScrapingConfig{
 	Url:             "https://wsj.com/news/latest-headlines",
 	Selector:        "h2[class*='WSJTheme--headline']",
 	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
 }
 
-var ReutersConfig = HeadlineConfig{
+var ReutersNewsConfig = ScrapingConfig{
 	Url:             "https://reuters.com/markets/us/",
 	Selector:        "a[class*='heading__heading'] span",
 	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
 }
 
-var YahooConfig = HeadlineConfig{
+var YahooNewsConfig = ScrapingConfig{
 	Url:             "https://finance.yahoo.com/news",
 	Selector:        "a.js-content-viewer",
 	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
 }
 
-var FinvizConfig = HeadlineConfig{
+var FinvizNewsConfig = ScrapingConfig{
 	Url:             "https://finviz.com/news.ashx",
 	Selector:        "tr.nn",
 	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
 }
 
-var FinvizTopGainersConfig = HeadlineConfig{
-	Url:             "https://finviz.com/screener.ashx?s=ta_topgainers",
+var FinvizTopGainersConfig = ScrapingConfig{
+	Url:             "https://finviz.com/screener.ashx?s=ta_topgainers&o=-change",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.TopGainersHandler,
+	FeedName:        "top-gainers",
+	InsertThreshold: 0.90,
 }
 
-var FinvizTopLosersConfig = HeadlineConfig{
-	Url:             "https://finviz.com/screener.ashx?s=ta_toplosers",
+var FinvizTopLosersConfig = ScrapingConfig{
+	Url:             "https://finviz.com/screener.ashx?s=ta_toplosers&o=change",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.TopLosersHandler,
+	FeedName:        "top-losers",
+	InsertThreshold: 0.90,
 }
 
-var FinvizNewHighConfig = HeadlineConfig{
-	Url:             "https://finviz.com/screener.ashx?s=ta_newhigh",
+var FinvizNewHighConfig = ScrapingConfig{
+	Url:             "https://finviz.com/screener.ashx?s=ta_newhigh&o=-change",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.NewHighHandler,
+	FeedName:        "new-highs",
+	InsertThreshold: 0.90,
 }
 
-var FinvizNewLowConfig = HeadlineConfig{
-	Url:             "https://finviz.com/screener.ashx?s=ta_newlow",
+var FinvizNewLowConfig = ScrapingConfig{
+	Url:             "https://finviz.com/screener.ashx?s=ta_newlow&o=change",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.NewLowHandler,
+	FeedName:        "new-lows",
+	InsertThreshold: 0.90,
 }
 
-var FinvizOverboughtConfig = HeadlineConfig{
+var FinvizOverboughtConfig = ScrapingConfig{
 	Url:             "https://finviz.com/screener.ashx?s=ta_overbought&o=-change",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.OverboughtHandler,
+	FeedName:        "overbought",
+	InsertThreshold: 0.90,
 }
 
-var FinvizOversoldConfig = HeadlineConfig{
+var FinvizOversoldConfig = ScrapingConfig{
 	Url:             "https://finviz.com/screener.ashx?s=ta_oversold&o=change",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.OversoldHandler,
+	FeedName:        "oversold",
+	InsertThreshold: 0.90,
 }
 
-var FinvizUnusualVolumeConfig = HeadlineConfig{
+var FinvizUnusualVolumeConfig = ScrapingConfig{
 	Url:             "https://finviz.com/screener.ashx?s=ta_unusualvolume&o=-volume",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.UnusualVolumeHandler,
+	FeedName:        "unusual-trading-volume",
+	InsertThreshold: 0.90,
 }
 
-var FinvizMostVolatileConfig = HeadlineConfig{
+var FinvizMostVolatileConfig = ScrapingConfig{
 	Url:             "https://finviz.com/screener.ashx?s=ta_mostvolatile",
 	Selector:        "table .table-light tr:nth-child(2)",
 	HandlerFunction: handlers.MostVolatileHandler,
+	FeedName:        "most-volatile",
+	InsertThreshold: 0.90,
+}
+
+var YahooSAndPFuturesConfig = ScrapingConfig{
+	Url:             "https://finance.yahoo.com",
+	Selector:        "a[title~='S&P']",
+	HandlerFunction: handlers.YahooFuturesHandler,
+	FeedName:        "futures",
+	InsertThreshold: 0.0,
+}
+
+var YahooDowFuturesConfig = ScrapingConfig{
+	Url:             "https://finance.yahoo.com",
+	Selector:        "a[title~='Dow']",
+	HandlerFunction: handlers.YahooFuturesHandler,
+	FeedName:        "futures",
+	InsertThreshold: 0.0,
+}
+
+var YahooSAndPCloseConfig = ScrapingConfig{
+	Url:             "https://finance.yahoo.com",
+	Selector:        "a[title~='S&P']",
+	HandlerFunction: handlers.YahooFuturesHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.0,
+}
+
+var YahooDowCloseConfig = ScrapingConfig{
+	Url:             "https://finance.yahoo.com",
+	Selector:        "a[title~='Dow']",
+	HandlerFunction: handlers.YahooFuturesHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.0,
 }
 
 // now define the slice of configs
-var HeadlineConfigs = []HeadlineConfig{
-	MarketWatchConfig,
-	WallStreetJournalConfig,
-	ReutersConfig,
-	YahooConfig,
-	FinvizConfig,
+var ScrapingConfigs = []ScrapingConfig{
+	MarketWatchNewsConfig,
+	WallStreetJournalNewsConfig,
+	ReutersNewsConfig,
+	YahooNewsConfig,
+	FinvizNewsConfig,
 	FinvizTopGainersConfig,
 	FinvizTopLosersConfig,
 	FinvizNewHighConfig,

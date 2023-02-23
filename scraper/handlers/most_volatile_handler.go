@@ -7,10 +7,10 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func MostVolatileHandler(headline *string, url string) func(e *colly.HTMLElement) {
+func MostVolatileHandler(squawk *string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
-		// only get the first headline
-		if *headline == "" {
+		// only get the first row of table
+		if *squawk == "" {
 			// loop at all td's in the element
 			tdTexts := []string{}
 			e.ForEach("td", func(_ int, e *colly.HTMLElement) {
@@ -29,10 +29,10 @@ func MostVolatileHandler(headline *string, url string) func(e *colly.HTMLElement
 				return
 			}
 
-			*headline = "Most volatile: " + tdTexts[2] + ", symbol " + tdTexts[1] + ", has had a large high / low trading range " + direction + " " + tdTexts[9] + " at $" + tdTexts[8] + "."
+			*squawk = "Most volatile: " + tdTexts[2] + ", symbol " + tdTexts[1] + ", has had a large high / low trading range " + direction + " " + tdTexts[9] + " at $" + tdTexts[8] + "."
 
-			// run headline cleaner utility
-			*headline = utils.CleanHeadline(*headline)
+			// run squawk cleaner utility
+			*squawk = utils.CleanSquawk(*squawk)
 
 			return
 		}

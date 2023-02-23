@@ -6,10 +6,10 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func TopGainersHandler(headline *string, url string) func(e *colly.HTMLElement) {
+func TopGainersHandler(squawk *string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
-		// only get the first headline
-		if *headline == "" {
+		// only get the first row of table
+		if *squawk == "" {
 			// loop at all td's in the element
 			tdTexts := []string{}
 			e.ForEach("td", func(_ int, e *colly.HTMLElement) {
@@ -23,10 +23,10 @@ func TopGainersHandler(headline *string, url string) func(e *colly.HTMLElement) 
 				return
 			}
 
-			*headline = "New top gainer: " + tdTexts[2] + ", symbol " + tdTexts[1] + ", up " + tdTexts[9] + "."
+			*squawk = "New top gainer: " + tdTexts[2] + ", symbol " + tdTexts[1] + ", up " + tdTexts[9] + "."
 
-			// run headline cleaner utility
-			*headline = utils.CleanHeadline(*headline)
+			// run squawk cleaner utility
+			*squawk = utils.CleanSquawk(*squawk)
 			return
 		}
 	}

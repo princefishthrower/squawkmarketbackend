@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func GenerateMP3Data(text string) []byte {
+func TextToSpeech(text string) []byte {
 	log.Println("getting voice data...")
 
 	// headers for elevenlabs

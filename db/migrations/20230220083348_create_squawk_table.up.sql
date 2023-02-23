@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS squawks (
+    id INTEGER PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    link TEXT,
+    symbols TEXT,
+    feed TEXT NOT NULL,
+    squawk TEXT NOT NULL,
+    mp3data BLOB NOT NULL
+)

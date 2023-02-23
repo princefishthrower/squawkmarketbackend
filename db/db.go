@@ -2,20 +2,20 @@ package db
 
 import (
 	"database/sql"
-	scraperTypes "squawkmarketbackend/scraper/types"
+	"squawkmarketbackend/models"
 	"squawkmarketbackend/utils"
 )
 
-func DoesHeadlineExist(headline string) (bool, error) {
-	headlines, err := GetHeadlines()
+func DoesSquawkExist(squawk string) (bool, error) {
+	squawks, err := GetSquawks()
 	if err != nil {
 		return false, err
 	}
 
-	return utils.Contains(headlines, headline), nil
+	return utils.Contains(squawks, squawk), nil
 }
 
-func GetHeadlines() ([]string, error) {
+func GetSquawks() ([]string, error) {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
@@ -23,36 +23,36 @@ func GetHeadlines() ([]string, error) {
 	}
 	defer db.Close()
 
-	// Query the headlines table
-	rows, err := db.Query("SELECT headline FROM headlines")
+	// Query the squawks table
+	rows, err := db.Query("SELECT squawk FROM squawks")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	// Loop through the results and print each headline
-	headlines := []scraperTypes.Headline{}
+	// Loop through the results and print each squawk
+	squawks := []models.Squawk{}
 	for rows.Next() {
-		var h scraperTypes.Headline
-		err := rows.Scan(&h.Headline)
+		var h models.Squawk
+		err := rows.Scan(&h.Squawk)
 		if err != nil {
 			return nil, err
 		}
-		headlines = append(headlines, h)
+		squawks = append(squawks, h)
 	}
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
 
 	// convert to strings
-	var headlineStrings []string
-	for _, headline := range headlines {
-		headlineStrings = append(headlineStrings, headline.Headline)
+	var squawkStrings []string
+	for _, squawk := range squawks {
+		squawkStrings = append(squawkStrings, squawk.Squawk)
 	}
-	return headlineStrings, nil
+	return squawkStrings, nil
 }
 
-func AddHeadline(headline string, mp3data []byte) error {
+func InsertSquawkIfNotExists(link, symbols, feed, squawk string, mp3data []byte) error {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
@@ -60,8 +60,8 @@ func AddHeadline(headline string, mp3data []byte) error {
 	}
 	defer db.Close()
 
-	// Check if headline already exists
-	exists, err := DoesHeadlineExist(headline)
+	// Check if squawk already exists
+	exists, err := DoesSquawkExist(squawk)
 	if err != nil {
 		return err
 	}
@@ -69,8 +69,8 @@ func AddHeadline(headline string, mp3data []byte) error {
 		return nil
 	}
 
-	// Insert a new headline
-	_, err = db.Exec("INSERT INTO headlines (headline, mp3data) VALUES (?, ?)", headline, mp3data)
+	// Insert a new squawk
+	_, err = db.Exec("INSERT INTO squawks (link, symbols, feed, squawk, mp3data) VALUES (?, ?, ?, ?, ?)", link, symbols, feed, squawk, mp3data)
 	if err != nil {
 		return err
 	}
@@ -78,34 +78,51 @@ func AddHeadline(headline string, mp3data []byte) error {
 	return nil
 }
 
-func GetLatestHeadline() (scraperTypes.Headline, error) {
+func GetLatestSquawk() (models.Squawk, error) {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
-		return scraperTypes.Headline{}, err
+		return models.Squawk{}, err
 	}
 	defer db.Close()
 
-	// Query the headlines table
-	rows, err := db.Query("SELECT * FROM headlines ORDER BY created_at DESC LIMIT 1")
+	// Query the squawks table
+	rows, err := db.Query("SELECT * FROM squawks ORDER BY created_at DESC LIMIT 1")
 	if err != nil {
-		return scraperTypes.Headline{}, err
+		return models.Squawk{}, err
 	}
 	defer rows.Close()
 
-	// Loop through the results and print each headline
-	headlines := []scraperTypes.Headline{}
+	// Loop through the results and print each squawk
+	squawks := []models.Squawk{}
 	for rows.Next() {
-		var h scraperTypes.Headline
-		err := rows.Scan(&h.ID, &h.CreatedAt, &h.Headline, &h.Mp3Data)
+		var h models.Squawk
+		err := rows.Scan(&h.ID, &h.CreatedAt, &h.Link, &h.Symbols, &h.Feed, &h.Squawk, &h.Mp3Data)
 		if err != nil {
-			return scraperTypes.Headline{}, err
+			return models.Squawk{}, err
 		}
-		headlines = append(headlines, h)
+		squawks = append(squawks, h)
 	}
 	if err = rows.Err(); err != nil {
-		return scraperTypes.Headline{}, err
+		return models.Squawk{}, err
 	}
 
-	return headlines[0], nil
+	return squawks[0], nil
+}
+
+func DeleteAllSquawks() error {
+	// Open a database connection
+	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	// Delete all squawks
+	_, err = db.Exec("DELETE FROM squawks")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

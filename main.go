@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"squawkmarketbackend/hub"
 	"squawkmarketbackend/jobs"
+	"squawkmarketbackend/stripe"
 	"time"
 
 	kitlog "github.com/go-kit/log"
@@ -22,6 +25,12 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	// two options - comment as needed
+	RunServer()
+	// RunMigrations()
+}
+
+func RunServer() {
 	hub := &hub.AppHub{}
 
 	// build a signalr.Server using your hub
@@ -34,47 +43,48 @@ func main() {
 		signalr.AllowOriginPatterns([]string{os.Getenv("EXTERNAL_URL")}),
 	)
 
-	// start headline scrape job using the server
-	jobs.StartFeedItemScrapeJob(server)
+	est, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// start scraping job using the server
+	jobs.StartScrapeJob(server)
+
+	// premarket job
+	jobs.StartPremarketJob(server, est)
+
+	// post market job
+	jobs.StartPostmarketJob(server, est)
+
+	// heartbeat job for uptime
 	jobs.StartHeartBeatJob()
+
+	// delete squawks job
+	jobs.DeleteSquawksJob(server, est)
+
+	// market open job
+	jobs.StartMarketOpenJob(server, est)
+
+	// market closed job
+	jobs.StartMarketClosedJob(server, est)
 
 	// create a new http.ServerMux to handle your app's http requests
 	router := http.NewServeMux()
 
 	// ask the signalr server to map it's server
 	// api routes to your custom baseurl
-	server.MapHTTP(signalr.WithHTTPServeMux(router), "/feed")
+	server.MapHTTP(signalr.WithHTTPServeMux(router), "/feeds")
+
+	// add stripe route
+	router.HandleFunc("/handle-stripe-webhook", stripe.HandleStripeWebhook)
 
 	log.Printf("Server starting, %s", os.Getenv("SERVER_URL"))
 	err = http.ListenAndServe(os.Getenv("SERVER_URL"), LogRequests(router))
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
-
-	// http.HandleFunc("/stream", websocket.HandleWebsocket)
-	// http.ListenAndServe(":8080", nil)
-
-	// migrations - TODO: get CLI way to work
-
-	// // Open a database connection
-	// db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer db.Close()
-
-	// // Create the headlines table
-	// _, err = db.Exec(`CREATE TABLE IF NOT EXISTS headlines (
-	// 	id INTEGER PRIMARY KEY,
-	// 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	// 	headline TEXT NOT NULL,
-	// 	mp3data BLOB NOT NULL
-	// )`)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Println("Database and table initialized successfully.")
 }
 
 func LogRequests(h http.Handler) http.Handler {
@@ -91,7 +101,7 @@ func LogRequests(h http.Handler) http.Handler {
 		// sample CORS handling
 		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("EXTERNAL_URL"))
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
-		w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-SignalR-User-Agent")
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization,X-Requested-With,X-SignalR-User-Agent")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -100,4 +110,30 @@ func LogRequests(h http.Handler) http.Handler {
 		// serve the inner request
 		h.ServeHTTP(w, r)
 	})
+}
+
+func RunMigrations() {
+	// migrations - TODO: get CLI way to work
+	// Open a database connection
+	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	// Create the table
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS squawks (
+		id INTEGER PRIMARY KEY,
+		created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		link TEXT,
+		symbols TEXT,
+		feed TEXT NOT NULL,
+		squawk TEXT NOT NULL,
+		mp3data BLOB NOT NULL
+	)`)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Database and table initialized successfully.")
 }

@@ -12,16 +12,16 @@ import (
 
 func TestParseFeedItem(t *testing.T) {
 	// loop over all configs and ensure they are working
-	for _, config := range scraperTypes.HeadlineConfigs {
+	for _, config := range scraperTypes.ScrapingConfigs {
 		// use reflection to get the function name
 		function := reflect.ValueOf(config.HandlerFunction)
 		functionName := runtime.FuncForPC(function.Pointer()).Name()
 		fmt.Println("Function name:", functionName)
-		// get the headline
-		headline, err := scraper.ParseFeedItem(config.Url, config.Selector, config.HandlerFunction)
-		fmt.Println("Headline:", *headline)
+		// get the squawk
+		squawk, err := scraper.ScrapeForConfigItem(config)
+		fmt.Println("Squawk: ", *squawk)
 		if err != nil {
-			t.Error("Error getting headline:", err)
+			t.Error("Error getting squawk:", err)
 			return
 		}
 	}

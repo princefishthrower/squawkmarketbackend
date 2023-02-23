@@ -3,7 +3,7 @@ package scraper
 import (
 	"log"
 	"squawkmarketbackend/db"
-	"squawkmarketbackend/elevenlabs"
+	"squawkmarketbackend/googletexttospeech"
 	"squawkmarketbackend/hub"
 	scraperTypes "squawkmarketbackend/scraper/types"
 	"time"
@@ -12,65 +12,71 @@ import (
 	"github.com/philippseith/signalr"
 )
 
-func ParseFeedItems(server signalr.Server) {
-	for _, config := range scraperTypes.HeadlineConfigs {
-		// get the headline
-		headline, err := ParseFeedItem(config.Url, config.Selector, config.HandlerFunction)
+func ScrapeForConfigItems(server signalr.Server) {
+	for _, config := range scraperTypes.ScrapingConfigs {
+		// get the squawk
+		squawk, err := ScrapeForConfigItem(config)
 		if err != nil {
-			log.Println("Error getting headline:", err)
+			log.Println("Error getting squawk:", err)
 			return
 		}
-		log.Println("Headline found and parsed, from: ", config.Url, ": ", *headline)
-		// ship and store headline
-		GenerateAndStoreFeedItemIfNotExists(*headline, server)
+		log.Println("Squawk found and parsed, from: ", config.Url, ": ", *squawk)
 
-		// wait 1 second before scraping the next headline
-		time.Sleep(1 * time.Second)
+		if *squawk == "" {
+			log.Println("Squawk is empty, skipping")
+			continue
+		}
+
+		// ship and store squawk
+		GenerateAndStoreFeedItemIfNotExists(*squawk, config.FeedName, server)
+
+		// wait 2 second before scraping the next squawk
+		time.Sleep(2 * time.Second)
 	}
 
 	// and then start all over again
-	ParseFeedItems(server)
+	ScrapeForConfigItems(server)
 }
 
-func ParseFeedItem(url string, selector string, onHtmlHandler func(*string, string) func(e *colly.HTMLElement)) (*string, error) {
+func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) (*string, error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("finviz.com", "finance.yahoo.com", "marketwatch.com", "reuters.com", "wsj.com"),
 	)
-
-	headline := ""
-	c.OnHTML(selector, onHtmlHandler(&headline, url))
-	c.Visit(url)
-
-	return &headline, nil
+	squawk := ""
+	c.OnHTML(config.Selector, config.HandlerFunction(&squawk, config.Url))
+	c.Visit(config.Url)
+	return &squawk, nil
 }
 
-func GenerateAndStoreFeedItemIfNotExists(headline string, server signalr.Server) {
-	// check if headline is already in database
-	headlineExists, err := db.DoesHeadlineExist(headline)
+func GenerateAndStoreFeedItemIfNotExists(squawk string, feedName string, server signalr.Server) {
+	// check if squawk is already in database
+	squawkExists, err := db.DoesSquawkExist(squawk)
 	if err != nil {
-		log.Println("Error checking if headline exists:", err)
+		log.Println("Error checking if squawk exists:", err)
 		return
 	}
-	if headlineExists {
+	if squawkExists {
+		log.Println("Squawk already exists in database, skipping")
 		return
 	}
 
-	// generate MP3 data and send over WebSocket
-	mp3Data := elevenlabs.GenerateMP3Data(headline)
+	// generate MP3 data
+	// mp3Data := elevenlabs.TextToSpeech(squawk)
+	mp3Data := googletexttospeech.TextToSpeech(squawk)
 
-	// add headline to database - will only add if the title is not already found in the database
-	err = db.AddHeadline(headline, mp3Data)
+	// add squawk to database - will only add if the title is not already found in the database
+	err = db.InsertSquawkIfNotExists("", "", feedName, squawk, mp3Data)
 	if err != nil {
-		log.Println("Error adding headline to database:", err)
+		log.Println("Error adding squawk to database:", err)
 		return
 	}
 
-	latestEntry, err := db.GetLatestHeadline()
+	squawkObj, err := db.GetLatestSquawk()
 	if err != nil {
-		log.Println("Error getting latest headline from database:", err)
+		log.Println("Error getting latest squawk from database:", err)
 		return
 	}
 
-	// ship the latest headline over the WebSocket
-	hub.BroadcastHeadline(latestEntry, server)
+	// ship the latest squawk over the WebSocket
+	hub.BroadcastSquawk(server, feedName, squawkObj)
 }

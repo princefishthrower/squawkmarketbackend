@@ -91,17 +91,22 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 	email := stripeCustomer.Email
 	userID, err := supabase.GetUserIdByEmail(email)
 	if err != nil {
-		generateErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("customer.subscription.deleted: DoesUserExistWithEmail: failed: %+v\n", err))
+		generateErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("customer.subscription.deleted: GetUserIdByEmail: failed: %+v\n", err))
 		return
 	}
 
 	// create user and send magic link if user does not exist
 	if userID == "" {
+		log.Printf("User does not exist, creating user with email %s", email)
 		userID, err = supabase.CreateUserWithEmail(email)
 		if err != nil {
 			generateErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("customer.subscription.deleted: CreateUserWithEmail: failed: %+v\n", err))
 			return
 		}
+		log.Printf("User created with id %s", userID)
+
+		// send magic link
+		log.Printf("Sending magic link to %s", email)
 		supabase.SendUserMagicLinkToEmail(email)
 	}
 

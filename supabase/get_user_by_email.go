@@ -21,6 +21,9 @@ func GetUserIdByEmail(email string) (string, error) {
 	res, _, err := client.From("profile").Select("id", "", false).Eq("email", email).Single().Execute()
 	if err != nil {
 		fmt.Println(err)
+		if err.Error() == "(PGRST116) JSON object requested, multiple (or no) rows returned" {
+			return "", nil
+		}
 		return "", err
 	}
 

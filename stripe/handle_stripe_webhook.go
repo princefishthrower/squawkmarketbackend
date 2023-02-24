@@ -124,15 +124,18 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+	case "customer.subscription.updated":
+		log.Printf("Subscription UPDATED for %s (user id: %s), subscription status: %s.", subscription.ID, userID, subscription.Status)
+
 		// either way we want to log the event on slack and update their subscription
 	case "customer.subscription.created":
-	case "customer.subscription.updated":
 		// this fires when a user creates, updates or deletes a subscription
 		// stripe emits this event type when a payment is accepted and the subscription is set to active
 
-		log.Printf("Subscription updated for %s (user id: %s).", subscription.ID, userID)
+		log.Printf("Subscription CREATED for %s (user id: %s), subscription status: %s.", subscription.ID, userID, subscription.Status)
 
-		if subscription.Status == stripe.SubscriptionStatusActive {
+		// all we should see for updated is the trial status
+		if subscription.Status == stripe.SubscriptionStatusTrialing {
 			// set user to premium
 			// _, err = graphqlclient.GraphQLClient.SetSubscriberSubscription(c, userID, graphqlclient.SubscriptionTiersEnumPremium)
 			err = supabase.SetUserSubscription(userID, true, "monthly")

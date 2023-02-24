@@ -98,8 +98,14 @@ func LogRequests(h http.Handler) http.Handler {
 			}
 		}
 
+		// if the origin is the staging site, allow CORS for it
+		corsSite := os.Getenv("EXTERNAL_URL")
+		if r.Header.Get("Origin") == "https://staging.squawkmarket.com" {
+			corsSite = "https://staging.squawkmarket.com"
+		}
+
 		// sample CORS handling
-		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("EXTERNAL_URL"))
+		w.Header().Set("Access-Control-Allow-Origin", corsSite)
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Headers", "Authorization,X-Requested-With,X-SignalR-User-Agent")
 		if r.Method == "OPTIONS" {

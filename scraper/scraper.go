@@ -30,8 +30,8 @@ func ScrapeForConfigItems(server signalr.Server) {
 		// ship and store squawk
 		GenerateAndStoreFeedItemIfNotExists(*squawk, config.FeedName, server)
 
-		// wait 2 second before scraping the next squawk
-		time.Sleep(2 * time.Second)
+		// wait 5 second before scraping the next squawk
+		time.Sleep(5 * time.Second)
 	}
 
 	// and then start all over again

@@ -7,6 +7,7 @@ import (
 	"os"
 	"squawkmarketbackend/supabase"
 	"squawkmarketbackend/utils"
+	"strings"
 
 	"log"
 	"net/http"
@@ -57,8 +58,12 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// convert payload to string
+	payloadString := string(payload)
+
 	// if the origin includes "staging", use the staging secret
-	if r.Header.Get("Is-Staging") == "true" {
+	if strings.Contains(payloadString, "\"livemode\": false") {
+		log.Printf("livemode is false, use staging secret")
 		endpointSecret = os.Getenv("STRIPE_WEBHOOK_SECRET_STAGING")
 	}
 

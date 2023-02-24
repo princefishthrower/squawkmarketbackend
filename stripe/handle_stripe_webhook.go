@@ -50,27 +50,23 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 	// If you are using an endpoint defined with the API or dashboard, look in your webhook settings
 	// at https://dashboard.stripe.com/webhooks
 	endpointSecret := os.Getenv("STRIPE_WEBHOOK_SECRET_PRODUCTION")
-
-	// print all headers
-	for name, headers := range r.Header {
-		for _, h := range headers {
-			log.Printf("I SEE HEADER: %v: %v", name, h)
-		}
-	}
+	stripe.Key = os.Getenv("STRIPE_SECRET_KEY_PRODUCTION")
 
 	// convert payload to string
 	payloadString := string(payload)
 
 	// if the origin includes "staging", use the staging secret
 	if strings.Contains(payloadString, "\"livemode\": false") {
-		log.Printf("livemode is false, use staging secret")
+		log.Printf("livemode is false, use staging credentials")
 		endpointSecret = os.Getenv("STRIPE_WEBHOOK_SECRET_STAGING")
+		stripe.Key = os.Getenv("STRIPE_SECRET_KEY_STAGING")
 	}
 
 	signatureHeader := r.Header.Get("Stripe-Signature")
 	log.Printf("I see signature header: %s", signatureHeader)
 	log.Printf("I see payload: %s", payload)
 	log.Printf("I see secret: %s", endpointSecret)
+	log.Printf("I see stripe.Key: %s", stripe.Key)
 	event, err := webhook.ConstructEvent(payload, signatureHeader, endpointSecret)
 	if err != nil {
 		generateErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("⚠️ webhook signature verification failed: %v\n", err))

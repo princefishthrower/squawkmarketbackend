@@ -56,6 +56,7 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	signatureHeader := r.Header.Get("Stripe-Signature")
+	log.Printf("I see signature header: %s", signatureHeader)
 	event, err := webhook.ConstructEvent(payload, signatureHeader, endpointSecret)
 	if err != nil {
 		generateErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("⚠️ webhook signature verification failed: %v\n", err))
@@ -108,6 +109,8 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// either way we want to log the event on slack and update their subscription
+	case "customer.subscription.created":
 	case "customer.subscription.updated":
 		// this fires when a user creates, updates or deletes a subscription
 		// stripe emits this event type when a payment is accepted and the subscription is set to active
@@ -128,10 +131,6 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 			// log the event on slack
 			utils.SendSlackMessage(fmt.Sprintf("💲💲💲Subscription ACTIVATED for user with ID %s!!!", userID))
 		}
-
-	case "customer.subscription.created":
-		// we don't care about this event because it's not fired if the payment is successful, but just when a subscription is initialized by the user
-		log.Printf("Subscription CREATED for %s (user id: %s).", subscription.ID, userID)
 	default:
 		log.Printf("error: HandleStripeWebhook: Unhandled event type: %s\n", event.Type)
 	}

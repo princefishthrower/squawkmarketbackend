@@ -50,6 +50,13 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 	// at https://dashboard.stripe.com/webhooks
 	endpointSecret := os.Getenv("STRIPE_WEBHOOK_SECRET_PRODUCTION")
 
+	// print all headers
+	for name, headers := range r.Header {
+		for _, h := range headers {
+			log.Printf("I SEE HEADER: %v: %v", name, h)
+		}
+	}
+
 	// if the origin includes "staging", use the staging secret
 	if r.Header.Get("Is-Staging") == "true" {
 		endpointSecret = os.Getenv("STRIPE_WEBHOOK_SECRET_STAGING")

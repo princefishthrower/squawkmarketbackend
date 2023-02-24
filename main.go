@@ -92,16 +92,19 @@ func LogRequests(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// log all headers in the request
-		for name, headers := range r.Header {
-			for _, h := range headers {
-				log.Printf("I SEE HEADER: %v: %v", name, h)
-			}
-		}
+		// for name, headers := range r.Header {
+		// 	for _, h := range headers {
+		// 		log.Printf("I SEE HEADER: %v: %v", name, h)
+		// 	}
+		// }
+
+		// log origin
+		log.Printf("I SEE ORIGIN: %v", r.Header.Get("Origin"))
 
 		// if the origin is the staging site, allow CORS for it
 		corsSite := os.Getenv("EXTERNAL_URL")
-		if r.Header.Get("Origin") == "https://staging.squawkmarket.com" {
-			corsSite = "https://staging.squawkmarket.com"
+		if r.Header.Get("Origin") == "https://staging.squawk-market.com" {
+			corsSite = "https://staging.squawk-market.com"
 		}
 
 		// sample CORS handling

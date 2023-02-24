@@ -145,7 +145,8 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 		log.Printf("error: HandleStripeWebhook: Unhandled event type: %s\n", event.Type)
 	}
 
-	// w.String(http.StatusOK, "OK")
+	log.Printf("Stripe webhook event successfully processed: %s", event.Type)
+
 	// return a 200 status code to stripe
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("OK"))

@@ -57,6 +57,8 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 
 	signatureHeader := r.Header.Get("Stripe-Signature")
 	log.Printf("I see signature header: %s", signatureHeader)
+	log.Printf("I see payload: %s", payload)
+	log.Printf("I see secret: %s", endpointSecret)
 	event, err := webhook.ConstructEvent(payload, signatureHeader, endpointSecret)
 	if err != nil {
 		generateErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("⚠️ webhook signature verification failed: %v\n", err))

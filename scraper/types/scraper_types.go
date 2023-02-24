@@ -6,6 +6,9 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
+// IMPORTANT! ADD SITES TO THIS SLICE
+var AllowedDomains = []string{"finviz.com", "finance.yahoo.com", "marketwatch.com", "reuters.com", "wsj.com", "cryptonews.com", "coindesk.com"}
+
 type ScrapingConfig struct {
 	Url             string
 	Selector        string
@@ -25,7 +28,7 @@ var MarketWatchNewsConfig = ScrapingConfig{
 
 var WallStreetJournalNewsConfig = ScrapingConfig{
 	Url:             "https://wsj.com/news/latest-headlines",
-	Selector:        "h2[class*='WSJTheme--headline']",
+	Selector:        "h2[class*='WSJTheme--headline'] a",
 	HandlerFunction: handlers.HeadlineHandler,
 	FeedName:        "market-wide",
 	InsertThreshold: 0.75,
@@ -50,6 +53,62 @@ var YahooNewsConfig = ScrapingConfig{
 var FinvizNewsConfig = ScrapingConfig{
 	Url:             "https://finviz.com/news.ashx",
 	Selector:        "tr.nn",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
+}
+
+var CryptonewsNewsConfig = ScrapingConfig{
+	Url:             "https://cryptonews.com/",
+	Selector:        "a.article__title",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "crypto",
+	InsertThreshold: 0.75,
+}
+
+var CoinDeskNewsConfig = ScrapingConfig{
+	Url:             "https://coindesk.com/",
+	Selector:        "div[class*='live-wirestyles__Title'] a",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "crypto",
+	InsertThreshold: 0.75,
+}
+
+var ForbesNewsConfig = ScrapingConfig{
+	Url:             "https://www.forbes.com/news",
+	Selector:        "h3 a.stream-item__title",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "crypto",
+	InsertThreshold: 0.75,
+}
+
+var EconomistBusinessNewsConfig = ScrapingConfig{
+	Url:             "https://www.economist.com/business",
+	Selector:        "h3 a",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
+}
+
+var EconomistFinanceNewsConfig = ScrapingConfig{
+	Url:             "https://www.economist.com/finance-and-economics",
+	Selector:        "h3 a",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
+}
+
+var BloombergMarketNewsConfig = ScrapingConfig{
+	Url:             "https://www.bloomberg.com/markets",
+	Selector:        ".single-story-module__headline-link",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
+}
+
+var FortuneNewsConfig = ScrapingConfig{
+	Url:             "https://fortune.com/",
+	Selector:        "ul li div a .titleLink",
 	HandlerFunction: handlers.HeadlineHandler,
 	FeedName:        "market-wide",
 	InsertThreshold: 0.75,
@@ -158,6 +217,8 @@ var ScrapingConfigs = []ScrapingConfig{
 	ReutersNewsConfig,
 	YahooNewsConfig,
 	FinvizNewsConfig,
+	CryptonewsNewsConfig,
+	CoinDeskNewsConfig,
 	FinvizTopGainersConfig,
 	FinvizTopLosersConfig,
 	FinvizNewHighConfig,

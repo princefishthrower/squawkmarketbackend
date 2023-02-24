@@ -40,7 +40,7 @@ func ScrapeForConfigItems(server signalr.Server) {
 
 func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) (*string, error) {
 	c := colly.NewCollector(
-		colly.AllowedDomains("finviz.com", "finance.yahoo.com", "marketwatch.com", "reuters.com", "wsj.com"),
+		colly.AllowedDomains(scraperTypes.AllowedDomains...),
 	)
 	squawk := ""
 	c.OnHTML(config.Selector, config.HandlerFunction(&squawk, config.Url))

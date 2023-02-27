@@ -40,7 +40,7 @@ func (h *AppHub) AddToGroup(group string, connectionID string) {
 	}
 
 	// if the group is the 'market-wide' group, also send them the latest squawk
-	squawk, err := db.GetLatestSquawk()
+	squawk, err := db.GetLatestSquawkByFeed("market-wide")
 	if err != nil {
 		fmt.Printf("Error getting latest squawk: %s", err)
 		return

@@ -25,13 +25,13 @@ func StartMarketOpenJob(server signalr.Server, est *time.Location) {
 		mp3Data := googletexttospeech.TextToSpeech(marketOpenMessage)
 
 		// insert into database
-		err := db.InsertSquawkIfNotExists("", "", feedName, marketOpenMessage, mp3Data)
+		err := db.InsertSquawk("", "", feedName, marketOpenMessage, mp3Data)
 		if err != nil {
 			log.Println("Error inserting squawk into database:", err)
 			return
 		}
 
-		squawk, err := db.GetLatestSquawk()
+		squawk, err := db.GetLatestSquawkByFeed("market-wide")
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

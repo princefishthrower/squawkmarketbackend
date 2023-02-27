@@ -30,9 +30,9 @@ func StartPostmarketJob(server signalr.Server, est *time.Location) {
 		mp3Data := googletexttospeech.TextToSpeech(*postmarketMessage)
 
 		// insert into database
-		err = db.InsertSquawkIfNotExists("", "", feedName, *postmarketMessage, mp3Data)
+		err = db.InsertSquawk("", "", feedName, *postmarketMessage, mp3Data)
 
-		squawk, err := db.GetLatestSquawk()
+		squawk, err := db.GetLatestSquawkByFeed("market-wide")
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

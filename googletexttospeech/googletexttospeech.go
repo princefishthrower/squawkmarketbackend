@@ -29,15 +29,18 @@ func TextToSpeech(text string) []byte {
 		// Build the voice request, select the language code ("en-US") and the SSML
 		// voice gender ("neutral").
 		Voice: &texttospeechpb.VoiceSelectionParams{
-			LanguageCode: "en-US",
+			LanguageCode: "en-gb",
 			SsmlGender:   texttospeechpb.SsmlVoiceGender_FEMALE,
-			Name:         "en-US-Studio-O",
+			// Name:         "en-US-Studio-O", // nice one but expensive
+			Name: "en-GB-Neural2-A",
 		},
 
 		// Select the type of audio file you want returned.
+		// TODO: could eventually be client side configurable
 		AudioConfig: &texttospeechpb.AudioConfig{
 			AudioEncoding: texttospeechpb.AudioEncoding_MP3,
-			SpeakingRate:  1.4,
+			SpeakingRate:  1.3,
+			Pitch:         0,
 		},
 	}
 

@@ -6,16 +6,39 @@ import (
 	"squawkmarketbackend/utils"
 )
 
-func DoesSquawkExist(squawk string) (bool, error) {
+func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feedName string, insertThreshold float64) (bool, error) {
 	squawks, err := GetSquawks()
 	if err != nil {
 		return false, err
 	}
 
-	return utils.Contains(squawks, squawk), nil
+	// market-wide we only check the value of the squawk itself
+	if feedName == "market-wide" || feedName == "crypto" {
+		// get squawk strings from all Squawk objects
+		var squawkStrings []string
+		for _, squawk := range squawks {
+			squawkStrings = append(squawkStrings, squawk.Squawk)
+		}
+		return utils.Contains(squawkStrings, squawk), nil
+	}
+	if feedName == "economic-prints" {
+		// for economic prints, we return true only if we can't find the symbol.
+		// in this case the 'symbols' is the name of the report with date, i.e. "fomcminutes20230201"
+
+		// get symbol strings from all Squawk objects
+		var symbolStrings []string
+		for _, squawk := range squawks {
+			symbolStrings = append(symbolStrings, squawk.Symbols)
+		}
+		return !utils.Contains(symbolStrings, symbols), nil
+	}
+
+	// TODO: for all finviz related ones, we check if the squawk fuzzy matches (using insertThreshhold) and if the symbols match
+
+	return false, nil
 }
 
-func GetSquawks() ([]string, error) {
+func GetSquawks() ([]models.Squawk, error) {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
@@ -44,30 +67,16 @@ func GetSquawks() ([]string, error) {
 		return nil, err
 	}
 
-	// convert to strings
-	var squawkStrings []string
-	for _, squawk := range squawks {
-		squawkStrings = append(squawkStrings, squawk.Squawk)
-	}
-	return squawkStrings, nil
+	return squawks, nil
 }
 
-func InsertSquawkIfNotExists(link, symbols, feed, squawk string, mp3data []byte) error {
+func InsertSquawk(link, symbols, feed, squawk string, mp3data []byte) error {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
 		return err
 	}
 	defer db.Close()
-
-	// Check if squawk already exists
-	exists, err := DoesSquawkExist(squawk)
-	if err != nil {
-		return err
-	}
-	if exists {
-		return nil
-	}
 
 	// Insert a new squawk
 	_, err = db.Exec("INSERT INTO squawks (link, symbols, feed, squawk, mp3data) VALUES (?, ?, ?, ?, ?)", link, symbols, feed, squawk, mp3data)
@@ -78,7 +87,7 @@ func InsertSquawkIfNotExists(link, symbols, feed, squawk string, mp3data []byte)
 	return nil
 }
 
-func GetLatestSquawk() (models.Squawk, error) {
+func GetLatestSquawkByFeed(feedName string) (models.Squawk, error) {
 	// Open a database connection
 	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
 	if err != nil {
@@ -87,7 +96,7 @@ func GetLatestSquawk() (models.Squawk, error) {
 	defer db.Close()
 
 	// Query the squawks table
-	rows, err := db.Query("SELECT * FROM squawks ORDER BY created_at DESC LIMIT 1")
+	rows, err := db.Query("SELECT * FROM squawks WHERE feed = (?) ORDER BY created_at DESC LIMIT 1", feedName)
 	if err != nil {
 		return models.Squawk{}, err
 	}

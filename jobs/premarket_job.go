@@ -31,9 +31,13 @@ func StartPremarketJob(server signalr.Server, est *time.Location) {
 		mp3Data := googletexttospeech.TextToSpeech(*premarketMessage)
 
 		// insert into database
-		err = db.InsertSquawkIfNotExists("", "", feedName, *premarketMessage, mp3Data)
+		err = db.InsertSquawk("", "", feedName, *premarketMessage, mp3Data)
+		if err != nil {
+			log.Println("Error inserting squawk into database:", err)
+			return
+		}
 
-		squawk, err := db.GetLatestSquawk()
+		squawk, err := db.GetLatestSquawkByFeed("market-wide")
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

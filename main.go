@@ -52,6 +52,9 @@ func RunServer() {
 	// start scraping job using the server
 	jobs.StartScrapeJob(server)
 
+	// google custom search job
+	jobs.StartGoogleCustomSearchJob(server)
+
 	// premarket job
 	jobs.StartPremarketJob(server, est)
 

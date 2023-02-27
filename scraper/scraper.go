@@ -28,7 +28,8 @@ func ScrapeForConfigItems(server signalr.Server) {
 		}
 
 		// ship and store squawk
-		GenerateAndStoreFeedItemIfNotExists(*squawk, config.FeedName, server)
+		// TODO: add some sort of symbol service to determine relevant symbols
+		GenerateAndStoreFeedItemIfNotExists(*squawk, "", config.FeedName, config.InsertThreshold, server)
 
 		// wait 5 second before scraping the next squawk
 		time.Sleep(5 * time.Second)
@@ -48,9 +49,9 @@ func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) (*string, error) {
 	return &squawk, nil
 }
 
-func GenerateAndStoreFeedItemIfNotExists(squawk string, feedName string, server signalr.Server) {
+func GenerateAndStoreFeedItemIfNotExists(squawk string, symbols string, feedName string, insertThreshold float64, server signalr.Server) {
 	// check if squawk is already in database
-	squawkExists, err := db.DoesSquawkExist(squawk)
+	squawkExists, err := db.DoesSquawkExistAccordingToFeedCriterion(squawk, symbols, feedName, insertThreshold)
 	if err != nil {
 		log.Println("Error checking if squawk exists:", err)
 		return
@@ -65,13 +66,13 @@ func GenerateAndStoreFeedItemIfNotExists(squawk string, feedName string, server 
 	mp3Data := googletexttospeech.TextToSpeech(squawk)
 
 	// add squawk to database - will only add if the title is not already found in the database
-	err = db.InsertSquawkIfNotExists("", "", feedName, squawk, mp3Data)
+	err = db.InsertSquawk("", "", feedName, squawk, mp3Data)
 	if err != nil {
 		log.Println("Error adding squawk to database:", err)
 		return
 	}
 
-	squawkObj, err := db.GetLatestSquawk()
+	squawkObj, err := db.GetLatestSquawkByFeed(feedName)
 	if err != nil {
 		log.Println("Error getting latest squawk from database:", err)
 		return

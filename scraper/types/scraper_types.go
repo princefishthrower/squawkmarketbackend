@@ -114,6 +114,14 @@ var FortuneNewsConfig = ScrapingConfig{
 	InsertThreshold: 0.75,
 }
 
+var BenzingaNewsConfig = ScrapingConfig{
+	Url:             "https://www.benzinga.com/recent",
+	Selector:        ".post-title span",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
+}
+
 var FinvizTopGainersConfig = ScrapingConfig{
 	Url:             "https://finviz.com/screener.ashx?s=ta_topgainers&o=-change",
 	Selector:        "table .table-light tr:nth-child(2)",
@@ -210,6 +218,14 @@ var YahooDowCloseConfig = ScrapingConfig{
 	InsertThreshold: 0.0,
 }
 
+var EconomicCalendarConfig = ScrapingConfig{
+	Url:             "https://www.investing.com/economic-calendar/",
+	Selector:        "table tr",
+	HandlerFunction: handlers.EconomicCalendarHandler,
+	FeedName:        "economic-prints",
+	InsertThreshold: 0.0,
+}
+
 // now define the slice of configs
 var ScrapingConfigs = []ScrapingConfig{
 	MarketWatchNewsConfig,
@@ -227,4 +243,5 @@ var ScrapingConfigs = []ScrapingConfig{
 	FinvizOversoldConfig,
 	FinvizUnusualVolumeConfig,
 	FinvizMostVolatileConfig,
+	EconomicCalendarConfig,
 }

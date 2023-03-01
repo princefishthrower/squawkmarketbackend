@@ -9,7 +9,9 @@ import (
 // IMPORTANT! ADD SITES TO THIS SLICE
 var AllowedDomains = []string{
 	"finviz.com",
+	"www.finviz.com",
 	"finance.yahoo.com",
+	"www.finance.yahoo.com",
 	"marketwatch.com",
 	"www.marketwatch.com",
 	"reuters.com",
@@ -18,12 +20,15 @@ var AllowedDomains = []string{
 	"www.wsj.com",
 	"cryptonews.com",
 	"coindesk.com",
+	"www.coindesk.com",
 	"investing.com",
 	"www.investing.com",
 	"forbes.com",
-	"coindesk.com",
+	"www.forbes.com",
 	"economist.com",
+	"www.economist.com",
 	"bloomberg.com",
+	"www.bloomberg.com",
 	"www.federalreserve.gov",
 	"benzinga.com",
 	"www.benzinga.com",
@@ -34,7 +39,7 @@ var AllowedDomains = []string{
 type ScrapingConfig struct {
 	Url             string
 	Selector        string
-	HandlerFunction func([]string, string) func(*colly.HTMLElement)
+	HandlerFunction func(*[]string, string) func(*colly.HTMLElement)
 	FeedName        string
 	InsertThreshold float64
 }

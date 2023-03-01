@@ -7,7 +7,7 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func UnusualVolumeHandler(squawks []string, url string) func(e *colly.HTMLElement) {
+func UnusualVolumeHandler(squawks *[]string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
 		// loop at all td's in the element
 		tdTexts := []string{}
@@ -35,6 +35,6 @@ func UnusualVolumeHandler(squawks []string, url string) func(e *colly.HTMLElemen
 		squawk = utils.CleanSquawk(squawk)
 
 		// append squawk to squawks slice
-		squawks = append(squawks, squawk)
+		*squawks = append(*squawks, squawk)
 	}
 }

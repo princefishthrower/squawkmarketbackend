@@ -50,8 +50,8 @@ func CustomSearch(query string) (*models.Squawk, error) {
 	// return only first squawk
 	if len(squawks) > 0 {
 		squawk := &squawks[0]
-		if squawk.Squawk == "" || squawk.Squawk == "Google news" {
-			return nil, fmt.Errorf("squawk is empty")
+		if squawk.Squawk == "" || squawk.Squawk == "Google News" {
+			return nil, fmt.Errorf("squawk is empty or was 'Google News'")
 		}
 		return &squawks[0], nil
 	}

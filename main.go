@@ -54,7 +54,7 @@ func RunServer() {
 
 	// google custom search job
 	// TODO: figure out google news bug here
-	// jobs.StartGoogleCustomSearchJob(server)
+	jobs.StartGoogleCustomSearchJob(server)
 
 	// premarket job
 	jobs.StartPremarketJob(server, est)

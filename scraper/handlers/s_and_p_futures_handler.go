@@ -6,10 +6,10 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func YahooFuturesHandler(squawks []string, url string) func(e *colly.HTMLElement) {
+func YahooFuturesHandler(squawks *[]string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
 		// only get the first element found
-		if len(squawks) == 0 {
+		if len(*squawks) == 0 {
 			// get the ariaLabel of the element
 			squawk := e.Attr("aria-label")
 
@@ -20,7 +20,7 @@ func YahooFuturesHandler(squawks []string, url string) func(e *colly.HTMLElement
 			squawk = squawk + "."
 
 			// append squawk to squawks slice
-			squawks = append(squawks, squawk)
+			*squawks = append(*squawks, squawk)
 			return
 		}
 	}

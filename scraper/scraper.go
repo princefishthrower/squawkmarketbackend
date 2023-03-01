@@ -21,6 +21,9 @@ func ScrapeForConfigItems(server signalr.Server) {
 			return
 		}
 
+		// log out squawks length
+		log.Println("Squawks found and parsed, from: ", config.Url, ": ", len(squawks))
+
 		// loop at all squawks
 		for _, squawk := range squawks {
 			log.Println("Squawks found and parsed, from: ", config.Url, ": ", squawk)
@@ -49,7 +52,7 @@ func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) ([]string, error) {
 		// colly.Debugger(&debug.LogDebugger{}),
 	)
 	squawks := make([]string, 0)
-	c.OnHTML(config.Selector, config.HandlerFunction(squawks, config.Url))
+	c.OnHTML(config.Selector, config.HandlerFunction(&squawks, config.Url))
 
 	// Set error handler
 	c.OnError(func(r *colly.Response, err error) {

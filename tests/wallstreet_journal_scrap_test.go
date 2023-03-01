@@ -7,20 +7,20 @@ import (
 )
 
 func TestWallstreetJournalScrape(t *testing.T) {
-	squawk, err := scraper.ScrapeForConfigItem(scraperTypes.WallStreetJournalNewsConfig)
+	squawks, err := scraper.ScrapeForConfigItem(scraperTypes.WallStreetJournalNewsConfig)
 	if err != nil {
 		t.Errorf("Error scraping for Wall Street Journal: %v", err)
 	}
 
-	if squawk == nil {
-		t.Errorf("Squawk is nil")
+	if len(squawks) == 0 {
+		t.Errorf("Squawks is empty")
 		return
 	}
 
-	if *squawk == "" {
-		t.Errorf("Squawk is empty")
+	if squawks[0] == "" {
+		t.Errorf("squawks[0] is empty")
 		return
 	}
 
-	t.Logf("TEST WALL STREET JOURNAL\n\n%v", squawk)
+	t.Logf("TEST WALL STREET JOURNAL\n\n%v", squawks[0])
 }

@@ -14,23 +14,26 @@ import (
 
 func ScrapeForConfigItems(server signalr.Server) {
 	for _, config := range scraperTypes.ScrapingConfigs {
-		// get the squawk
-		squawk, err := ScrapeForConfigItem(config)
+		// get the squawks from the config
+		squawks, err := ScrapeForConfigItem(config)
 		if err != nil {
 			log.Println("Error getting squawk:", err)
 			return
 		}
-		log.Println("Squawk found and parsed, from: ", config.Url, ": ", *squawk)
 
-		if *squawk == "" {
-			log.Println("Squawk is empty, skipping")
-			continue
+		// loop at all squawks
+		for _, squawk := range squawks {
+			log.Println("Squawks found and parsed, from: ", config.Url, ": ", squawk)
+
+			if squawk == "" {
+				log.Println("Squawk is empty, skipping")
+				continue
+			}
+
+			// ship and store squawk
+			// TODO: add some sort of symbol service to determine relevant symbols
+			GenerateAndStoreFeedItemIfNotExists(squawk, "", config.FeedName, config.InsertThreshold, server)
 		}
-
-		// ship and store squawk
-		// TODO: add some sort of symbol service to determine relevant symbols
-		GenerateAndStoreFeedItemIfNotExists(*squawk, "", config.FeedName, config.InsertThreshold, server)
-
 		// wait 5 second before scraping the next squawk
 		time.Sleep(5 * time.Second)
 	}
@@ -39,14 +42,14 @@ func ScrapeForConfigItems(server signalr.Server) {
 	ScrapeForConfigItems(server)
 }
 
-func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) (*string, error) {
+func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) ([]string, error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains(scraperTypes.AllowedDomains...),
 		// useful for debugging
 		// colly.Debugger(&debug.LogDebugger{}),
 	)
-	squawk := ""
-	c.OnHTML(config.Selector, config.HandlerFunction(&squawk, config.Url))
+	squawks := make([]string, 0)
+	c.OnHTML(config.Selector, config.HandlerFunction(squawks, config.Url))
 
 	// Set error handler
 	c.OnError(func(r *colly.Response, err error) {
@@ -54,7 +57,7 @@ func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) (*string, error) {
 	})
 
 	c.Visit(config.Url)
-	return &squawk, nil
+	return squawks, nil
 }
 
 func GenerateAndStoreFeedItemIfNotExists(squawk string, symbols string, feedName string, insertThreshold float64, server signalr.Server) {

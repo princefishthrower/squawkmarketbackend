@@ -12,13 +12,16 @@ import (
 var countStrings = []string{"First", "Second", "Third", "Fourth"}
 
 func GenerateFedMeetingMinutesSummary() (*string, error) {
-	text, err := scraper.ScrapeForConfigItem(scraperTypes.FOMCMeetingMinutesConfig)
+	texts, err := scraper.ScrapeForConfigItem(scraperTypes.FOMCMeetingMinutesConfig)
 	if err != nil {
+		return nil, err
+	}
+	if len(texts) == 0 {
 		return nil, err
 	}
 
 	// parse text - break into sentences
-	sentences := strings.Split(*text, ".")
+	sentences := strings.Split(texts[0], ".")
 
 	// for each sentence, check if it contains "basis points"
 	matchedSentences := utils.SearchSentences(sentences, "basis points")

@@ -12,16 +12,18 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 		return false, err
 	}
 
-	// market-wide we only check the value of the squawk itself
-	if feedName == "market-wide" || feedName == "crypto" {
+	switch feedName {
+	// market-wide / crypto we only check the value of the squawk itself
+	case "market-wide":
+	case "crypto":
 		// get squawk strings from all Squawk objects
 		var squawkStrings []string
 		for _, squawk := range squawks {
 			squawkStrings = append(squawkStrings, squawk.Squawk)
 		}
 		return utils.Contains(squawkStrings, squawk), nil
-	}
-	if feedName == "economic-prints" {
+
+	case "economic-prints":
 		// for economic prints, we return true only if we can't find the symbol.
 		// in this case the 'symbols' is the name of the report with date, i.e. "fomcminutes20230201"
 
@@ -31,9 +33,42 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 			symbolStrings = append(symbolStrings, squawk.Symbols)
 		}
 		return !utils.Contains(symbolStrings, symbols), nil
-	}
 
-	// TODO: for all finviz related ones, we check if the squawk fuzzy matches (using insertThreshhold) and if the symbols match
+	case "unusual-trading-volume":
+	case "most-volatile":
+	case "most-active":
+	case "new-highs":
+	case "new-lows":
+	case "overbought":
+	case "oversold":
+	case "top-gainers":
+	case "top-losers":
+		//for all finviz related ones, we check if the squawk fuzzy matches (using insertThreshold) and if the symbols match
+		// get all existing squawks today that match the feedName
+		existingSquawks, err := GetSquawksByFeedName(feedName)
+		if err != nil {
+			return false, err
+		}
+
+		// get squawk strings from all Squawk objects
+		var squawkStrings []string
+		for _, squawk := range existingSquawks {
+			squawkStrings = append(squawkStrings, squawk.Squawk)
+		}
+
+		// check if the squawk fuzzy matches (using utils.IsDisimilarEnough and insertThreshold) and if the symbols match
+		for i, existingSquawk := range existingSquawks {
+			if utils.IsDisimilarEnough(squawk, existingSquawk.Squawk, insertThreshold) && existingSquawk.Symbols == symbols {
+				return true, nil
+			}
+			// if we've reached the end of the list and haven't found a match, return false
+			if i == len(existingSquawks)-1 {
+				return false, nil
+			}
+		}
+	default:
+		return false, nil
+	}
 
 	return false, nil
 }
@@ -58,6 +93,38 @@ func GetSquawks() ([]models.Squawk, error) {
 	for rows.Next() {
 		var h models.Squawk
 		err := rows.Scan(&h.Squawk)
+		if err != nil {
+			return nil, err
+		}
+		squawks = append(squawks, h)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return squawks, nil
+}
+
+func GetSquawksByFeedName(feedName string) ([]models.Squawk, error) {
+	// Open a database connection
+	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	// Query the squawks table
+	rows, err := db.Query("SELECT * FROM squawks WHERE feed = (?)", feedName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Loop through the results and print each squawk
+	squawks := []models.Squawk{}
+	for rows.Next() {
+		var h models.Squawk
+		err := rows.Scan(&h.ID, &h.CreatedAt, &h.Link, &h.Symbols, &h.Feed, &h.Squawk, &h.Mp3Data)
 		if err != nil {
 			return nil, err
 		}

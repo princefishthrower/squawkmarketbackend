@@ -34,7 +34,7 @@ var AllowedDomains = []string{
 type ScrapingConfig struct {
 	Url             string
 	Selector        string
-	HandlerFunction func(*string, string) func(*colly.HTMLElement)
+	HandlerFunction func([]string, string) func(*colly.HTMLElement)
 	FeedName        string
 	InsertThreshold float64
 }

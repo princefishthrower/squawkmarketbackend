@@ -6,11 +6,11 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func WallStreetJournalHeadlineHandler(squawk *string, url string) func(e *colly.HTMLElement) {
+func WallStreetJournalHeadlineHandler(squawks []string, url string) func(e *colly.HTMLElement) {
 	return func(e *colly.HTMLElement) {
 
-		// only continue if the squawk is empty
-		if *squawk != "" {
+		// only continue if the squawk array is empty
+		if len(squawks) != 0 {
 			return
 		}
 
@@ -26,8 +26,9 @@ func WallStreetJournalHeadlineHandler(squawk *string, url string) func(e *colly.
 
 					// if the headline is not empty
 					if headline != "" {
-						*squawk = headline + " - " + url
-						*squawk = utils.CleanSquawk(*squawk)
+						squawk := headline + " - " + url
+						squawk = utils.CleanSquawk(squawk)
+						squawks = append(squawks, squawk)
 						return
 					}
 				})

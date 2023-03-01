@@ -26,6 +26,8 @@ func CleanSquawk(squawk string) string {
 	squawk = strings.ReplaceAll(squawk, "UPDATES", "")
 	squawk = strings.ReplaceAll(squawk, "Analysis:", "")
 	squawk = strings.ReplaceAll(squawk, "WRAPUP 1-", "")
+	squawk = strings.ReplaceAll(squawk, "EMERGING MARKETS-", "")
+	squawk = strings.ReplaceAll(squawk, "FOREX-", "")
 	squawk = strings.ReplaceAll(squawk, "---", " - ")
 	m1 := regexp.MustCompile(`[0-9][0-9]:[0-9][0-9][AP]M`)
 	replaced := m1.ReplaceAllString(squawk, "")

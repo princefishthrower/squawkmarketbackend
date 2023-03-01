@@ -7,15 +7,15 @@ import (
 )
 
 func TestEconomicCalendarScrape(t *testing.T) {
-	squawk, err := scraper.ScrapeForConfigItem(scraperTypes.EconomicCalendarConfig)
+	_, err := scraper.ScrapeForConfigItem(scraperTypes.EconomicCalendarConfig)
 	if err != nil {
 		t.Errorf("Error scraping for economic calendar: %v", err)
 	}
 
-	if squawk == nil {
-		t.Errorf("Squawk is nil")
-		return
-	}
+	// if len(squawks) == 0 {
+	// 	t.Errorf("Squawk is nil")
+	// 	return
+	// }
 
 	// empty is actually fine if there isn't a new figure yet
 	// if *squawk == "" {

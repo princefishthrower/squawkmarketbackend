@@ -16,25 +16,27 @@ func TestGoogleCustomSearch(t *testing.T) {
 		log.Fatalf("Error loading .env file")
 	}
 
-	squawk, err := googlecustomsearch.CustomSearch("TSLA")
+	squawkModel, err := googlecustomsearch.CustomSearch("TSLA")
 	if err != nil {
 		log.Fatalf("Unable to execute search: %v", err)
 	}
 
-	if squawk == nil {
+	if squawkModel == nil {
 		t.Errorf("Squawks is nil")
+		return
 	}
 
-	t.Logf("IN TEST: BEGIN SQUAWKS:\n\n%v", squawk)
+	t.Logf("IN TEST: BEGIN SQUAWKS:\n\n%s", squawkModel.Squawk)
 
-	squawk, err = googlecustomsearch.CustomSearch("financial breaking news")
+	squawkModel, err = googlecustomsearch.CustomSearch("financial breaking news")
 	if err != nil {
 		log.Fatalf("Unable to execute search: %v", err)
 	}
 
-	if squawk == nil {
+	if squawkModel == nil {
 		t.Errorf("Squawks is nil")
+		return
 	}
 
-	t.Logf("IN TEST: BEGIN SQUAWK:\n\n%v", squawk)
+	t.Logf("IN TEST: BEGIN SQUAWK:\n\n%s", squawkModel.Squawk)
 }

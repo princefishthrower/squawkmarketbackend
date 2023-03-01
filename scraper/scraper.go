@@ -42,9 +42,17 @@ func ScrapeForConfigItems(server signalr.Server) {
 func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) (*string, error) {
 	c := colly.NewCollector(
 		colly.AllowedDomains(scraperTypes.AllowedDomains...),
+		// useful for debugging
+		// colly.Debugger(&debug.LogDebugger{}),
 	)
 	squawk := ""
 	c.OnHTML(config.Selector, config.HandlerFunction(&squawk, config.Url))
+
+	// Set error handler
+	c.OnError(func(r *colly.Response, err error) {
+		log.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+
 	c.Visit(config.Url)
 	return &squawk, nil
 }

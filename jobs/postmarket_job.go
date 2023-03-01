@@ -16,8 +16,8 @@ func StartPostmarketJob(server signalr.Server, est *time.Location) {
 	feedName := "market-wide"
 	c := cron.New(cron.WithLocation(est))
 
-	// run postmarket cron every weekday at 5:00pm EST
-	c.AddFunc("0 17 * * 1-5", func() {
+	// run postmarket cron every weekday at 16:02pm EST
+	c.AddFunc("2 16 * * 1-5", func() {
 
 		// generate premarket message
 		postmarketMessage, err := generators.GeneratePostmarketMessage()

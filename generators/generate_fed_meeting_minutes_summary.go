@@ -2,8 +2,9 @@ package generators
 
 import (
 	"fmt"
-	"squawkmarketbackend/pdfdownloader"
-	"squawkmarketbackend/pdfextractor"
+	"squawkmarketbackend/openai"
+	"squawkmarketbackend/scraper"
+	scraperTypes "squawkmarketbackend/scraper/types"
 	"squawkmarketbackend/utils"
 	"strings"
 )
@@ -11,15 +12,7 @@ import (
 var countStrings = []string{"First", "Second", "Third", "Fourth"}
 
 func GenerateFedMeetingMinutesSummary() (*string, error) {
-	fileName := "fomcminutes20230201.pdf"
-	// download using pdfdownloader
-	err := pdfdownloader.DownloadPdf("https://www.federalreserve.gov/monetarypolicy/files/fomcminutes20230201.pdf", fileName)
-	if err != nil {
-		return nil, err
-	}
-
-	// convert to text using pdfextractor
-	text, err := pdfextractor.GetPdfText(fileName)
+	text, err := scraper.ScrapeForConfigItem(scraperTypes.FOMCMeetingMinutesConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -42,5 +35,11 @@ func GenerateFedMeetingMinutesSummary() (*string, error) {
 		}
 	}
 
-	return &message, nil
+	// now open AI to generate a summary
+	summary, err := openai.AskGPT("Can you summarize the following to just 4-5 sentences? \n\n" + message)
+	if err != nil {
+		return nil, err
+	}
+
+	return summary, nil
 }

@@ -3,9 +3,12 @@
         "Cryptonews",
         "Finviz",
         "googletexttospeech",
+        "kitlog",
+        "Logfmt",
         "OPRA",
         "Postmarket",
         "premarket",
+        "signalr",
         "squawkmarketbackend",
         "supabase",
         "wallstreetjournal"

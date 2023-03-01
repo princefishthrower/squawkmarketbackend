@@ -7,7 +7,29 @@ import (
 )
 
 // IMPORTANT! ADD SITES TO THIS SLICE
-var AllowedDomains = []string{"finviz.com", "finance.yahoo.com", "marketwatch.com", "reuters.com", "wsj.com", "cryptonews.com", "coindesk.com"}
+var AllowedDomains = []string{
+	"finviz.com",
+	"finance.yahoo.com",
+	"marketwatch.com",
+	"www.marketwatch.com",
+	"reuters.com",
+	"www.reuters.com",
+	"wsj.com",
+	"www.wsj.com",
+	"cryptonews.com",
+	"coindesk.com",
+	"investing.com",
+	"www.investing.com",
+	"forbes.com",
+	"coindesk.com",
+	"economist.com",
+	"bloomberg.com",
+	"www.federalreserve.gov",
+	"benzinga.com",
+	"www.benzinga.com",
+	"fortune.com",
+	"www.fortune.com",
+}
 
 type ScrapingConfig struct {
 	Url             string
@@ -28,8 +50,8 @@ var MarketWatchNewsConfig = ScrapingConfig{
 
 var WallStreetJournalNewsConfig = ScrapingConfig{
 	Url:             "https://wsj.com/news/latest-headlines",
-	Selector:        "h2[class*='WSJTheme--headline'] a",
-	HandlerFunction: handlers.HeadlineHandler,
+	Selector:        "article[class*='WSJTheme--story']",
+	HandlerFunction: handlers.WallStreetJournalHeadlineHandler,
 	FeedName:        "market-wide",
 	InsertThreshold: 0.75,
 }
@@ -219,9 +241,17 @@ var YahooDowCloseConfig = ScrapingConfig{
 }
 
 var EconomicCalendarConfig = ScrapingConfig{
-	Url:             "https://www.investing.com/economic-calendar/",
+	Url:             "https://investing.com/economic-calendar/",
 	Selector:        "table tr",
 	HandlerFunction: handlers.EconomicCalendarHandler,
+	FeedName:        "economic-prints",
+	InsertThreshold: 0.0,
+}
+
+var FOMCMeetingMinutesConfig = ScrapingConfig{
+	Url:             "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
+	Selector:        "#article",
+	HandlerFunction: handlers.FOMCMeetingMinutesHandler,
 	FeedName:        "economic-prints",
 	InsertThreshold: 0.0,
 }

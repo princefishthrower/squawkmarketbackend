@@ -29,14 +29,14 @@ func CustomSearch(query string) (*models.Squawk, error) {
 		return nil, err
 	}
 
-	// Print out the top search results
-	fmt.Println("Search results for", query)
-	for _, result := range resp.Items {
-		fmt.Println(result.Title)
-		fmt.Println(result.Link)
-		fmt.Println(result.Snippet)
-		fmt.Println()
-	}
+	// For debugging:
+	// fmt.Println("Search results for", query)
+	// for _, result := range resp.Items {
+	// 	fmt.Println(result.Title)
+	// 	fmt.Println(result.Link)
+	// 	fmt.Println(result.Snippet)
+	// 	fmt.Println()
+	// }
 
 	// convert items to squawks
 	squawks := make([]models.Squawk, len(resp.Items))

@@ -21,9 +21,6 @@ func ScrapeForConfigItems(server signalr.Server) {
 			return
 		}
 
-		// log out squawks length
-		log.Println("Squawks found and parsed, from: ", config.Url, ": ", len(squawks))
-
 		// loop at all squawks
 		for _, squawk := range squawks {
 			log.Println("Squawks found and parsed, from: ", config.Url, ": ", squawk)
@@ -71,9 +68,11 @@ func GenerateAndStoreFeedItemIfNotExists(squawk string, symbols string, feedName
 		return
 	}
 	if squawkExists {
-		log.Println("Squawk already exists in database, skipping")
+		log.Println("Squawk already exists in database, not generating mp3 or broadcasting")
 		return
 	}
+
+	log.Println("Squawk does not exist in database, generating mp3 and broadcasting")
 
 	// generate MP3 data
 	// mp3Data := elevenlabs.TextToSpeech(squawk)

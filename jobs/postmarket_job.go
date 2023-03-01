@@ -31,6 +31,10 @@ func StartPostmarketJob(server signalr.Server, est *time.Location) {
 
 		// insert into database
 		err = db.InsertSquawk("", "", feedName, *postmarketMessage, mp3Data)
+		if err != nil {
+			log.Println("Error inserting squawk into database:", err)
+			return
+		}
 
 		squawk, err := db.GetLatestSquawkByFeed("market-wide")
 		if err != nil {

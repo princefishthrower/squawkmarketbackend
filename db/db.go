@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"log"
 	"squawkmarketbackend/models"
 	"squawkmarketbackend/utils"
 )
@@ -12,21 +13,28 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 		return false, err
 	}
 
+	// log that we are in this function and the length of the existing squawks
+	log.Println("DoesSquawkAlreadyExistAccordingToFeedCriterion, feedName: ", feedName, ", len(existingSquawks): ", len(existingSquawks))
+
+	// get all squawk strings
+	var existingSquawkStrings []string
+	for _, existingSquawk := range existingSquawks {
+		existingSquawkStrings = append(existingSquawkStrings, existingSquawk.Squawk)
+	}
+
 	switch feedName {
 	// market-wide / crypto we only check the value of the squawk itself
 	case "market-wide":
+		fallthrough
 	case "crypto":
-		// get squawk strings from all Squawk objects
-		var existingSquawkStrings []string
-		for _, existingSquawk := range existingSquawks {
-			existingSquawkStrings = append(existingSquawkStrings, existingSquawk.Squawk)
-		}
-		return utils.Contains(existingSquawkStrings, squawk), nil
+		exists := utils.Contains(existingSquawkStrings, squawk)
+		log.Println("squawk: ", squawk)
+		log.Println("market-wide feedName, does squawk in database:", exists)
+		return exists, nil
 
 	case "economic-prints":
 		// for economic prints, we return false only if we can't find the symbol.
 		// in this case the 'symbols' is the name of the report with date, i.e. "fomcminutes20230201"
-
 		// get symbol strings from all Squawk objects
 		var symbolStrings []string
 		for _, squawk := range existingSquawks {
@@ -35,15 +43,23 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 		return utils.Contains(symbolStrings, symbols), nil
 
 	case "unusual-trading-volume":
+		fallthrough
 	case "most-volatile":
+		fallthrough
 	case "most-active":
+		fallthrough
 	case "new-highs":
+		fallthrough
 	case "new-lows":
+		fallthrough
 	case "overbought":
+		fallthrough
 	case "oversold":
+		fallthrough
 	case "top-gainers":
+		fallthrough
 	case "top-losers":
-		//for all finviz related ones, we check if the squawk fuzzy matches (using insertThreshold) and if the symbols match
+		// for all finviz related ones, we check if the squawk fuzzy matches (using insertThreshold) and if the symbols match
 		// get all existing squawks today that match the feedName
 		existingSquawks, err := GetSquawksByFeedName(feedName)
 		if err != nil {
@@ -62,8 +78,6 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 	default:
 		return false, nil
 	}
-
-	return false, nil
 }
 
 func GetSquawks() ([]models.Squawk, error) {

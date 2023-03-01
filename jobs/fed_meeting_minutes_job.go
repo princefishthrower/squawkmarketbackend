@@ -12,13 +12,24 @@ import (
 )
 
 func StartFedMeetingMinutesJob(server signalr.Server) {
-	feedName := "market-wide"
+	feedName := "economic-prints"
 	c := cron.New()
 	// run fed minutes cron every minute
 	c.AddFunc("8 * * * *", func() {
 		fedMeetingMinutesSummary, err := generators.GenerateFedMeetingMinutesSummary()
 		if err != nil {
 			log.Println("Error generating premarket message: ", err)
+			return
+		}
+
+		// check if squawk is already in database
+		exists, err := db.DoesSquawkAlreadyExistAccordingToFeedCriterion(*fedMeetingMinutesSummary, "", feedName, 0.75)
+		if err != nil {
+			log.Println("Error checking if squawk already exists in database:", err)
+			return
+		}
+		if exists {
+			log.Println("Squawk already exists in database, skipping")
 			return
 		}
 

@@ -26,6 +26,16 @@ func StartGoogleCustomSearchJob(server signalr.Server) {
 			return
 		}
 
+		if squawk == nil {
+			log.Println("Squawk is nil, skipping")
+			return
+		}
+
+		if squawk.Squawk == "" {
+			log.Println("Squawk is empty, skipping")
+			return
+		}
+
 		squawkExists, err := db.DoesSquawkExistAccordingToFeedCriterion(squawk.Squawk, "", feedName, 0.75)
 		if err != nil {
 			log.Println("Error checking if squawk exists:", err)

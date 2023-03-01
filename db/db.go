@@ -6,7 +6,7 @@ import (
 	"squawkmarketbackend/utils"
 )
 
-func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feedName string, insertThreshold float64) (bool, error) {
+func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols string, feedName string, insertThreshold float64) (bool, error) {
 	existingSquawks, err := GetSquawks()
 	if err != nil {
 		return false, err
@@ -24,7 +24,7 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 		return utils.Contains(existingSquawkStrings, squawk), nil
 
 	case "economic-prints":
-		// for economic prints, we return true only if we can't find the symbol.
+		// for economic prints, we return false only if we can't find the symbol.
 		// in this case the 'symbols' is the name of the report with date, i.e. "fomcminutes20230201"
 
 		// get symbol strings from all Squawk objects
@@ -32,7 +32,7 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 		for _, squawk := range existingSquawks {
 			symbolStrings = append(symbolStrings, squawk.Symbols)
 		}
-		return !utils.Contains(symbolStrings, symbols), nil
+		return utils.Contains(symbolStrings, symbols), nil
 
 	case "unusual-trading-volume":
 	case "most-volatile":
@@ -50,22 +50,15 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 			return false, err
 		}
 
-		// get squawk strings from all Squawk objects
-		var squawkStrings []string
-		for _, squawk := range existingSquawks {
-			squawkStrings = append(squawkStrings, squawk.Squawk)
-		}
-
-		// check if the squawk fuzzy matches (using utils.IsDisimilarEnough and insertThreshold) and if the symbols match
-		for i, existingSquawk := range existingSquawks {
-			if utils.IsDisimilarEnough(squawk, existingSquawk.Squawk, insertThreshold) && existingSquawk.Symbols == symbols {
+		// check if the squawk matches (using utils.IsTooSimilar and insertThreshold) and if the symbols match
+		for _, existingSquawk := range existingSquawks {
+			// if the strings are too similar and the symbols match, return true
+			if utils.AreStringsTooSimilar(squawk, existingSquawk.Squawk, insertThreshold) && existingSquawk.Symbols == symbols {
 				return true, nil
 			}
-			// if we've reached the end of the list and haven't found a match, return false
-			if i == len(existingSquawks)-1 {
-				return false, nil
-			}
 		}
+		// if we get here, we didn't find a too similar squawk, so return false
+		return false, nil
 	default:
 		return false, nil
 	}

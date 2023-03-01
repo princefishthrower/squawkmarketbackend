@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "adrg",
         "benzinga",
         "coindesk",
         "Cryptonews",
@@ -10,6 +11,7 @@
         "Finviz",
         "FOMC",
         "fomcminutes",
+        "FOREX",
         "gocolly",
         "googlecustomsearch",
         "googletexttospeech",
@@ -26,9 +28,11 @@
         "robfig",
         "signalr",
         "squawkmarketbackend",
+        "strutil",
         "supabase",
         "TSLA",
         "wallstreetjournal",
-        "wirestyles"
+        "wirestyles",
+        "WRAPUP"
     ]
 }

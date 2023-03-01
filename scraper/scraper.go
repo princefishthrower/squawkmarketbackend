@@ -65,7 +65,7 @@ func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) ([]string, error) {
 
 func GenerateAndStoreFeedItemIfNotExists(squawk string, symbols string, feedName string, insertThreshold float64, server signalr.Server) {
 	// check if squawk is already in database
-	squawkExists, err := db.DoesSquawkExistAccordingToFeedCriterion(squawk, symbols, feedName, insertThreshold)
+	squawkExists, err := db.DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk, symbols, feedName, insertThreshold)
 	if err != nil {
 		log.Println("Error checking if squawk exists:", err)
 		return

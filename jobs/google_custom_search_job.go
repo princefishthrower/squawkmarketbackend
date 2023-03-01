@@ -36,7 +36,7 @@ func StartGoogleCustomSearchJob(server signalr.Server) {
 			return
 		}
 
-		squawkExists, err := db.DoesSquawkExistAccordingToFeedCriterion(squawk.Squawk, "", feedName, 0.75)
+		squawkExists, err := db.DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk.Squawk, "", feedName, 0.75)
 		if err != nil {
 			log.Println("Error checking if squawk exists:", err)
 			return

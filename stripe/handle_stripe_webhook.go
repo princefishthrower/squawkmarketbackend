@@ -115,7 +115,6 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 	case "customer.subscription.deleted":
 		// this fires when a subscription is canceled
 		log.Printf("Subscription DELETED for %s (user id: %s).", subscription.ID, userID)
-		// _, err = graphqlclient.GraphQLClient.SetSubscriberSubscription(c, userID, graphqlclient.SubscriptionTiersEnumFree)
 
 		err = supabase.SetUserSubscription(userID, false, "monthly")
 
@@ -137,7 +136,6 @@ func HandleStripeWebhook(w http.ResponseWriter, r *http.Request) {
 		// all we should see for updated is the trial status
 		if subscription.Status == stripe.SubscriptionStatusTrialing {
 			// set user to premium
-			// _, err = graphqlclient.GraphQLClient.SetSubscriberSubscription(c, userID, graphqlclient.SubscriptionTiersEnumPremium)
 			err = supabase.SetUserSubscription(userID, true, "monthly")
 			if err != nil {
 				generateErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("customer.subscription.updated: SetSubscriberSubscriptionPremium: failed: %+v\n", err))

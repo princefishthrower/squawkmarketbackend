@@ -7,7 +7,7 @@ import (
 )
 
 func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feedName string, insertThreshold float64) (bool, error) {
-	squawks, err := GetSquawks()
+	existingSquawks, err := GetSquawks()
 	if err != nil {
 		return false, err
 	}
@@ -17,11 +17,11 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 	case "market-wide":
 	case "crypto":
 		// get squawk strings from all Squawk objects
-		var squawkStrings []string
-		for _, squawk := range squawks {
-			squawkStrings = append(squawkStrings, squawk.Squawk)
+		var existingSquawkStrings []string
+		for _, existingSquawk := range existingSquawks {
+			existingSquawkStrings = append(existingSquawkStrings, existingSquawk.Squawk)
 		}
-		return utils.Contains(squawkStrings, squawk), nil
+		return utils.Contains(existingSquawkStrings, squawk), nil
 
 	case "economic-prints":
 		// for economic prints, we return true only if we can't find the symbol.
@@ -29,7 +29,7 @@ func DoesSquawkExistAccordingToFeedCriterion(squawk string, symbols string, feed
 
 		// get symbol strings from all Squawk objects
 		var symbolStrings []string
-		for _, squawk := range squawks {
+		for _, squawk := range existingSquawks {
 			symbolStrings = append(symbolStrings, squawk.Symbols)
 		}
 		return !utils.Contains(symbolStrings, symbols), nil

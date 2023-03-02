@@ -1,3 +1,4 @@
 .env
 .env.sh
 squawk-market-credentials.json
+squawkmarketbackend.db

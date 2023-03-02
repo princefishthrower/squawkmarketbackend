@@ -16,6 +16,10 @@ WORKDIR /app
 COPY .env /app/
 
 # also copy in the DB!
+# COPY squawkmarketbackend.db /app/
+
+# Create new empty file for the DB
+RUN touch squawkmarketbackend.db
 COPY squawkmarketbackend.db /app/
 
 # also the google cloud credentials

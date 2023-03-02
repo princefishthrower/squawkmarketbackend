@@ -285,7 +285,9 @@ var FOMCMeetingMinutesConfig = ScrapingConfig{
 	InsertThreshold: 0.0,
 }
 
-// now define the slice of configs
+// now define various configs:
+
+// headlines
 var HeadlineScrapingConfigs = []ScrapingConfig{
 	MarketWatchNewsConfig,
 	WallStreetJournalNewsConfig,
@@ -294,10 +296,10 @@ var HeadlineScrapingConfigs = []ScrapingConfig{
 	FinvizNewsConfig,
 	CryptonewsNewsConfig,
 	CoinDeskNewsConfig,
-
 	InvestingDotComNewsConfig,
 }
 
+// finviz scrapes
 var FinvizScrapingConfigs = []ScrapingConfig{
 	FinvizTopGainersConfig,
 	FinvizTopLosersConfig,
@@ -309,6 +311,7 @@ var FinvizScrapingConfigs = []ScrapingConfig{
 	FinvizMostVolatileConfig,
 }
 
+// economic prints
 var EconomicPrintScrapingConfigs = []ScrapingConfig{
 	USEconomicCalendarConfig,
 	EUEconomicCalendarConfig,

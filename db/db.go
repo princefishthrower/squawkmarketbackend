@@ -28,8 +28,6 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 		fallthrough
 	case "crypto":
 		exists := utils.Contains(existingSquawkStrings, squawk)
-		log.Println("squawk: ", squawk)
-		log.Println("market-wide feedName, does squawk in database:", exists)
 		return exists, nil
 
 	case "us-economic-prints":
@@ -37,14 +35,9 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 	case "eu-economic-prints":
 		fallthrough
 	case "cny-economic-prints":
-		// for economic prints, we return false only if we can't find the symbol.
-		// in this case the 'symbols' is the name of the report with date, i.e. "fomcminutes20230201"
-		// get symbol strings from all Squawk objects
-		var symbolStrings []string
-		for _, squawk := range existingSquawks {
-			symbolStrings = append(symbolStrings, squawk.Symbols)
-		}
-		return utils.Contains(symbolStrings, symbols), nil
+		// for economic prints, the scraper itself is only forward looking so we can just use the squawk itself
+		exists := utils.Contains(existingSquawkStrings, squawk)
+		return exists, nil
 
 	case "unusual-trading-volume":
 		fallthrough

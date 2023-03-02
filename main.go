@@ -25,9 +25,11 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// two options - comment as needed
+	// run up migrations
+	RunUpMigrations()
+
+	// run server
 	RunServer()
-	// RunMigrations()
 }
 
 func RunServer() {
@@ -132,8 +134,8 @@ func LogRequests(h http.Handler) http.Handler {
 	})
 }
 
-func RunMigrations() {
-	// migrations - TODO: get CLI way to work
+func RunUpMigrations() {
+	// up migrations
 	// Open a database connection
 	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
@@ -155,5 +157,5 @@ func RunMigrations() {
 		panic(err)
 	}
 
-	fmt.Println("Database and table initialized successfully.")
+	fmt.Println("Up migrations run successfully.")
 }

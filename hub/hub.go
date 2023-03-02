@@ -35,12 +35,8 @@ func BroadcastSquawk(server signalr.Server, feedName string, squawk models.Squaw
 func (h *AppHub) AddToGroup(group string, connectionID string) {
 	h.Groups().AddToGroup(group, connectionID)
 
-	if group != "market-wide" {
-		return
-	}
-
-	// if the group is the 'market-wide' group, also send them the latest squawk
-	squawk, err := db.GetLatestSquawkByFeed("market-wide")
+	// send them the latest squawk by the feed they just subscribed to
+	squawk, err := db.GetLatestSquawkByFeed(group)
 	if err != nil {
 		fmt.Printf("Error getting latest squawk: %s", err)
 		return

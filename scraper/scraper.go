@@ -12,8 +12,8 @@ import (
 	"github.com/philippseith/signalr"
 )
 
-func ScrapeForConfigItems(server signalr.Server) {
-	for _, config := range scraperTypes.ScrapingConfigs {
+func ScrapeForConfigs(server signalr.Server, scrapingConfigs []scraperTypes.ScrapingConfig, duration time.Duration) {
+	for _, config := range scrapingConfigs {
 		// get the squawks from the config
 		squawks, err := ScrapeForConfigItem(config)
 		if err != nil {
@@ -35,11 +35,11 @@ func ScrapeForConfigItems(server signalr.Server) {
 			GenerateAndStoreFeedItemIfNotExists(squawk, "", config.FeedName, config.InsertThreshold, server)
 		}
 		// wait 5 second before scraping the next squawk
-		time.Sleep(5 * time.Second)
+		time.Sleep(duration)
 	}
 
 	// and then start all over again
-	ScrapeForConfigItems(server)
+	ScrapeForConfigs(server, scrapingConfigs, duration)
 }
 
 func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) ([]string, error) {

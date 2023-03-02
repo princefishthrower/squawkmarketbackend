@@ -7,7 +7,7 @@ import (
 )
 
 func TestEconomicCalendarScrape(t *testing.T) {
-	_, err := scraper.ScrapeForConfigItem(scraperTypes.EconomicCalendarConfig)
+	_, err := scraper.ScrapeForConfigItem(scraperTypes.USEconomicCalendarConfig)
 	if err != nil {
 		t.Errorf("Error scraping for economic calendar: %v", err)
 	}

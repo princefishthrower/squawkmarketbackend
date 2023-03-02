@@ -245,24 +245,48 @@ var YahooDowCloseConfig = ScrapingConfig{
 	InsertThreshold: 0.0,
 }
 
-var EconomicCalendarConfig = ScrapingConfig{
+var USEconomicCalendarConfig = ScrapingConfig{
 	Url:             "https://investing.com/economic-calendar/",
 	Selector:        "table tr",
-	HandlerFunction: handlers.EconomicCalendarHandler,
-	FeedName:        "economic-prints",
+	HandlerFunction: handlers.USEconomicCalendarHandler,
+	FeedName:        "us-economic-prints",
 	InsertThreshold: 0.0,
+}
+
+var EUEconomicCalendarConfig = ScrapingConfig{
+	Url:             "https://investing.com/economic-calendar/",
+	Selector:        "table tr",
+	HandlerFunction: handlers.EUEconomicCalendarHandler,
+	FeedName:        "eu-economic-prints",
+	InsertThreshold: 0.0,
+}
+
+var ChinaEconomicCalendarConfig = ScrapingConfig{
+	Url:             "https://investing.com/economic-calendar/",
+	Selector:        "table tr",
+	HandlerFunction: handlers.EUEconomicCalendarHandler,
+	FeedName:        "cny-economic-prints",
+	InsertThreshold: 0.0,
+}
+
+var InvestingDotComNewsConfig = ScrapingConfig{
+	Url:             "https://www.investing.com/news/latest-news",
+	Selector:        ".largeTitle article.js-article-item .textDiv a",
+	HandlerFunction: handlers.HeadlineHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.75,
 }
 
 var FOMCMeetingMinutesConfig = ScrapingConfig{
 	Url:             "https://www.federalreserve.gov/monetarypolicy/fomcminutes20230201.htm",
 	Selector:        "#article",
 	HandlerFunction: handlers.FOMCMeetingMinutesHandler,
-	FeedName:        "economic-prints",
+	FeedName:        "us-economic-prints",
 	InsertThreshold: 0.0,
 }
 
 // now define the slice of configs
-var ScrapingConfigs = []ScrapingConfig{
+var HeadlineScrapingConfigs = []ScrapingConfig{
 	MarketWatchNewsConfig,
 	WallStreetJournalNewsConfig,
 	ReutersNewsConfig,
@@ -270,6 +294,11 @@ var ScrapingConfigs = []ScrapingConfig{
 	FinvizNewsConfig,
 	CryptonewsNewsConfig,
 	CoinDeskNewsConfig,
+
+	InvestingDotComNewsConfig,
+}
+
+var FinvizScrapingConfigs = []ScrapingConfig{
 	FinvizTopGainersConfig,
 	FinvizTopLosersConfig,
 	FinvizNewHighConfig,
@@ -278,5 +307,10 @@ var ScrapingConfigs = []ScrapingConfig{
 	FinvizOversoldConfig,
 	FinvizUnusualVolumeConfig,
 	FinvizMostVolatileConfig,
-	EconomicCalendarConfig,
+}
+
+var EconomicPrintScrapingConfigs = []ScrapingConfig{
+	USEconomicCalendarConfig,
+	EUEconomicCalendarConfig,
+	ChinaEconomicCalendarConfig,
 }

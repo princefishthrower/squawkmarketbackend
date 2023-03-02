@@ -12,7 +12,7 @@ import (
 )
 
 func StartFedMeetingMinutesJob(server signalr.Server) {
-	feedName := "economic-prints"
+	feedName := "us-economic-prints"
 	c := cron.New()
 	// run fed minutes cron every minute
 	c.AddFunc("8 * * * *", func() {

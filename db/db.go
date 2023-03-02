@@ -32,7 +32,11 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 		log.Println("market-wide feedName, does squawk in database:", exists)
 		return exists, nil
 
-	case "economic-prints":
+	case "us-economic-prints":
+		fallthrough
+	case "eu-economic-prints":
+		fallthrough
+	case "cny-economic-prints":
 		// for economic prints, we return false only if we can't find the symbol.
 		// in this case the 'symbols' is the name of the report with date, i.e. "fomcminutes20230201"
 		// get symbol strings from all Squawk objects

@@ -135,7 +135,7 @@ func LogRequests(h http.Handler) http.Handler {
 func RunMigrations() {
 	// migrations - TODO: get CLI way to work
 	// Open a database connection
-	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
 		panic(err)
 	}

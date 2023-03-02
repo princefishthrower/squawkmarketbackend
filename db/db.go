@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"log"
+	"os"
 	"squawkmarketbackend/models"
 	"squawkmarketbackend/utils"
 )
@@ -79,7 +80,7 @@ func DoesSquawkAlreadyExistAccordingToFeedCriterion(squawk string, symbols strin
 
 func GetSquawks() ([]models.Squawk, error) {
 	// Open a database connection
-	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +112,7 @@ func GetSquawks() ([]models.Squawk, error) {
 
 func GetSquawksByFeedName(feedName string) ([]models.Squawk, error) {
 	// Open a database connection
-	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +144,7 @@ func GetSquawksByFeedName(feedName string) ([]models.Squawk, error) {
 
 func InsertSquawk(link, symbols, feed, squawk string, mp3data []byte) error {
 	// Open a database connection
-	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
 		return err
 	}
@@ -160,7 +161,7 @@ func InsertSquawk(link, symbols, feed, squawk string, mp3data []byte) error {
 
 func GetLatestSquawkByFeed(feedName string) (models.Squawk, error) {
 	// Open a database connection
-	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
 		return models.Squawk{}, err
 	}
@@ -192,7 +193,7 @@ func GetLatestSquawkByFeed(feedName string) (models.Squawk, error) {
 
 func DeleteAllSquawks() error {
 	// Open a database connection
-	db, err := sql.Open("sqlite3", "squawkmarketbackend.db")
+	db, err := sql.Open("sqlite3", os.Getenv("DB_PATH"))
 	if err != nil {
 		return err
 	}

@@ -15,13 +15,6 @@ WORKDIR /app
 # Copy this app's .env file to the container's /app directory
 COPY .env /app/
 
-# also copy in the DB!
-# COPY squawkmarketbackend.db /app/
-
-# Create new empty file for the DB
-RUN touch squawkmarketbackend.db
-COPY squawkmarketbackend.db /app/
-
 # also the google cloud credentials
 COPY squawk-market-credentials.json /app/
 

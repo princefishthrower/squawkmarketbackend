@@ -55,6 +55,9 @@ func RunServer() {
 	// economic prints
 	jobs.EconomicPrintScrapeJob(server)
 
+	// finviz scrape job
+	jobs.StartFinvizScrapeJob(server)
+
 	// google custom search job
 	// TODO: figure out google news bug here
 	// TODO: figure out costs here

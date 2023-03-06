@@ -2,8 +2,8 @@ package scraper
 
 import (
 	"log"
+	"squawkmarketbackend/amazontexttospeech"
 	"squawkmarketbackend/db"
-	"squawkmarketbackend/googletexttospeech"
 	"squawkmarketbackend/hub"
 	scraperTypes "squawkmarketbackend/scraper/types"
 	"time"
@@ -13,6 +13,14 @@ import (
 )
 
 func ScrapeForConfigs(server signalr.Server, scrapingConfigs []scraperTypes.ScrapingConfig, duration time.Duration) {
+	// if it is not between 8am and 5pm EST, don't scrape
+	if !IsItTimeToScrape() {
+		log.Println("It is not time to scrape, sleeping for 1 minute")
+		time.Sleep(1 * time.Minute)
+		ScrapeForConfigs(server, scrapingConfigs, duration)
+		return
+	}
+
 	for _, config := range scrapingConfigs {
 		// get the squawks from the config
 		squawks, err := ScrapeForConfigItem(config)
@@ -40,6 +48,19 @@ func ScrapeForConfigs(server signalr.Server, scrapingConfigs []scraperTypes.Scra
 
 	// and then start all over again
 	ScrapeForConfigs(server, scrapingConfigs, duration)
+}
+
+func IsItTimeToScrape() bool {
+	est, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	now := time.Now().In(est)
+	if now.Hour() < 8 || now.Hour() > 17 {
+		return false
+	}
+	return true
 }
 
 func ScrapeForConfigItem(config scraperTypes.ScrapingConfig) ([]string, error) {
@@ -74,9 +95,12 @@ func GenerateAndStoreFeedItemIfNotExists(squawk string, symbols string, feedName
 
 	log.Println("Squawk does not exist in database, generating mp3 and broadcasting")
 
-	// generate MP3 data
-	// mp3Data := elevenlabs.TextToSpeech(squawk)
-	mp3Data := googletexttospeech.TextToSpeech(squawk)
+	// convert to MP3
+	mp3Data, err := amazontexttospeech.TextToSpeech(squawk)
+	if err != nil {
+		log.Println("Error converting text to speech:", err)
+		return
+	}
 
 	// add squawk to database - will only add if the title is not already found in the database
 	err = db.InsertSquawk("", "", feedName, squawk, mp3Data)

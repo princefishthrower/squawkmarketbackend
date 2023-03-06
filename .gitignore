@@ -2,3 +2,4 @@
 .env.sh
 squawk-market-credentials.json
 volumes/squawkmarketbackend.db
+.aws

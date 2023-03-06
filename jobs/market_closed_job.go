@@ -2,8 +2,8 @@ package jobs
 
 import (
 	"log"
+	"squawkmarketbackend/amazontexttospeech"
 	"squawkmarketbackend/db"
-	"squawkmarketbackend/googletexttospeech"
 	"squawkmarketbackend/hub"
 	"time"
 
@@ -22,16 +22,20 @@ func StartMarketClosedJob(server signalr.Server, est *time.Location) {
 		marketOpenMessage := "The market is now closed."
 
 		// convert to MP3
-		mp3Data := googletexttospeech.TextToSpeech(marketOpenMessage)
+		mp3Data, err := amazontexttospeech.TextToSpeech(marketOpenMessage)
+		if err != nil {
+			log.Println("Error converting text to speech:", err)
+			return
+		}
 
 		// insert into database
-		err := db.InsertSquawk("", "", feedName, marketOpenMessage, mp3Data)
+		err = db.InsertSquawk("", "", feedName, marketOpenMessage, mp3Data)
 		if err != nil {
 			log.Println("Error inserting squawk into database:", err)
 			return
 		}
 
-		squawk, err := db.GetLatestSquawkByFeed("market-wide")
+		squawk, err := db.GetLatestSquawkByFeed(feedName)
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

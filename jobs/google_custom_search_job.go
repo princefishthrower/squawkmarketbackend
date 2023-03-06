@@ -4,7 +4,6 @@ import (
 	"log"
 	"squawkmarketbackend/db"
 	"squawkmarketbackend/googlecustomsearch"
-	"squawkmarketbackend/googletexttospeech"
 	"squawkmarketbackend/hub"
 
 	"github.com/philippseith/signalr"
@@ -47,16 +46,16 @@ func StartGoogleCustomSearchJob(server signalr.Server) {
 		}
 
 		// convert to MP3
-		mp3Data := googletexttospeech.TextToSpeech(squawk.Squawk)
+		// mp3Data := googletexttospeech.TextToSpeech(squawk.Squawk)
 
 		// insert into database
-		err = db.InsertSquawk("", "", feedName, squawk.Squawk, mp3Data)
+		err = db.InsertSquawk("", "", feedName, squawk.Squawk, nil)
 		if err != nil {
 			log.Println("Error inserting squawk into database:", err)
 			return
 		}
 
-		squawkObj, err := db.GetLatestSquawkByFeed("market-wide")
+		squawkObj, err := db.GetLatestSquawkByFeed(feedName)
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

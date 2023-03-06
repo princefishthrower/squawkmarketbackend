@@ -2,9 +2,9 @@ package jobs
 
 import (
 	"log"
+	"squawkmarketbackend/amazontexttospeech"
 	"squawkmarketbackend/db"
 	"squawkmarketbackend/generators"
-	"squawkmarketbackend/googletexttospeech"
 	"squawkmarketbackend/hub"
 	"time"
 
@@ -28,7 +28,11 @@ func StartPremarketJob(server signalr.Server, est *time.Location) {
 		}
 
 		// convert to MP3
-		mp3Data := googletexttospeech.TextToSpeech(*premarketMessage)
+		mp3Data, err := amazontexttospeech.TextToSpeech(*premarketMessage)
+		if err != nil {
+			log.Println("Error converting text to speech:", err)
+			return
+		}
 
 		// insert into database
 		err = db.InsertSquawk("", "", feedName, *premarketMessage, mp3Data)
@@ -37,7 +41,7 @@ func StartPremarketJob(server signalr.Server, est *time.Location) {
 			return
 		}
 
-		squawk, err := db.GetLatestSquawkByFeed("market-wide")
+		squawk, err := db.GetLatestSquawkByFeed(feedName)
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

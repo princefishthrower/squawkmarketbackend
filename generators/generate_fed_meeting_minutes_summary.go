@@ -2,7 +2,7 @@ package generators
 
 import (
 	"fmt"
-	"squawkmarketbackend/openai"
+	"squawkmarketbackend/open_ai"
 	"squawkmarketbackend/scraper"
 	scraperTypes "squawkmarketbackend/scraper/types"
 	"squawkmarketbackend/utils"
@@ -39,7 +39,7 @@ func GenerateFedMeetingMinutesSummary() (*string, error) {
 	}
 
 	// now open AI to generate a summary
-	summary, err := openai.AskGPT("Can you summarize the following to just 4-5 sentences? \n\n" + message)
+	summary, err := open_ai.AskGPT("Can you summarize the following to just 4-5 sentences? \n\n" + message)
 	if err != nil {
 		return nil, err
 	}

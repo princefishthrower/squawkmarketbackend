@@ -10,9 +10,9 @@ import (
 	"testing"
 )
 
-func TestParseFeedItem(t *testing.T) {
+func TestScrapeHeadlines(t *testing.T) {
 	// loop over all configs and ensure they are working
-	for _, config := range scraperTypes.ScrapingConfigs {
+	for _, config := range scraperTypes.HeadlineScrapingConfigs {
 		// use reflection to get the function name
 		function := reflect.ValueOf(config.HandlerFunction)
 		functionName := runtime.FuncForPC(function.Pointer()).Name()

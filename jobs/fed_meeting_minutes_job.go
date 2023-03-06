@@ -2,9 +2,9 @@ package jobs
 
 import (
 	"log"
+	"squawkmarketbackend/amazontexttospeech"
 	"squawkmarketbackend/db"
 	"squawkmarketbackend/generators"
-	"squawkmarketbackend/googletexttospeech"
 	"squawkmarketbackend/hub"
 
 	"github.com/philippseith/signalr"
@@ -34,7 +34,11 @@ func StartFedMeetingMinutesJob(server signalr.Server) {
 		}
 
 		// convert to MP3
-		mp3Data := googletexttospeech.TextToSpeech(*fedMeetingMinutesSummary)
+		mp3Data, err := amazontexttospeech.TextToSpeech(*fedMeetingMinutesSummary)
+		if err != nil {
+			log.Println("Error converting text to speech:", err)
+			return
+		}
 
 		// insert into database
 		err = db.InsertSquawk("", "", feedName, *fedMeetingMinutesSummary, mp3Data)
@@ -43,7 +47,7 @@ func StartFedMeetingMinutesJob(server signalr.Server) {
 			return
 		}
 
-		squawk, err := db.GetLatestSquawkByFeed("market-wide")
+		squawk, err := db.GetLatestSquawkByFeed(feedName)
 		if err != nil {
 			log.Println("Error getting latest squawk from database:", err)
 			return

@@ -13,8 +13,8 @@ func YahooFuturesHandler(squawks *[]string, url string) func(e *colly.HTMLElemen
 			// get the ariaLabel of the element
 			squawk := e.Attr("aria-label")
 
-			// replace the word "has" with "have"
-			squawk = strings.ReplaceAll(squawk, "has", "have")
+			// replace the word "have" with "has"
+			squawk = strings.ReplaceAll(squawk, "have", "has")
 
 			// add period to the end of the the sentence
 			squawk = squawk + "."

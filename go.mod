@@ -28,6 +28,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/nedpals/postgrest-go v0.1.2 // indirect
@@ -52,13 +53,14 @@ require (
 	cloud.google.com/go/texttospeech v1.6.0
 	github.com/adrg/strutil v0.3.0
 	github.com/andybalholm/cascadia v1.3.1 // indirect
+	github.com/aws/aws-sdk-go v1.44.214
 	github.com/gin-gonic/gin v1.9.0 // indirect
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/nedpals/supabase-go v0.2.0
 	github.com/philippseith/signalr v0.6.0
-	github.com/sashabaranov/go-gpt3 v1.2.1
+	github.com/sashabaranov/go-openai v1.4.1
 	github.com/stripe/stripe-go/v72 v72.122.0
 	github.com/supabase/postgrest-go v0.0.7
 	golang.org/x/net v0.7.0 // indirect

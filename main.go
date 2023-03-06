@@ -30,9 +30,6 @@ func main() {
 
 	// run server
 	RunServer()
-
-	// test for video transcription
-	// videototext.ContinuouslyTranscribeYoutubeStream("dp8PhLsUcFE")
 }
 
 func RunServer() {

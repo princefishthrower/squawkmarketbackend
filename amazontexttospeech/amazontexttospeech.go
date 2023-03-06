@@ -13,7 +13,9 @@ import (
 
 // TextToSpeech converts text to speech using Amazon Polly
 func TextToSpeech(text string) ([]byte, error) {
-	sess := session.Must(session.NewSession())
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1"),
+	}))
 	svc := polly.New(sess)
 
 	input := &polly.SynthesizeSpeechInput{

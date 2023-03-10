@@ -51,6 +51,8 @@ func RunServer() {
 		return
 	}
 
+	// jobs.StartListenToSymbolsJob(server, est)
+
 	// start scraping job using the server
 	jobs.StartHeadlineScrapeJob(server)
 
@@ -60,10 +62,10 @@ func RunServer() {
 	// finviz scrape job
 	jobs.StartFinvizScrapeJob(server)
 
-	// google custom search job
-	// TODO: figure out google news bug here
-	// TODO: figure out costs here
-	// jobs.StartGoogleCustomSearchJob(server)
+	// // google custom search job
+	// // TODO: figure out google news bug here
+	// // TODO: figure out costs here
+	// // jobs.StartGoogleCustomSearchJob(server)
 
 	// premarket job
 	jobs.StartPremarketJob(server, est)
@@ -82,6 +84,9 @@ func RunServer() {
 
 	// market closed job
 	jobs.StartMarketClosedJob(server, est)
+
+	// sector job
+	jobs.StartSectorJob(server, est)
 
 	// create a new http.ServerMux to handle your app's http requests
 	router := http.NewServeMux()
@@ -112,7 +117,7 @@ func LogRequests(h http.Handler) http.Handler {
 		// }
 
 		// log origin
-		log.Printf("I SEE ORIGIN: %v", r.Header.Get("Origin"))
+		// log.Printf("I SEE ORIGIN: %v", r.Header.Get("Origin"))
 
 		// if the origin is the staging site, allow CORS for it
 		corsSite := os.Getenv("EXTERNAL_URL")

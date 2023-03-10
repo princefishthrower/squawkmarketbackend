@@ -2,6 +2,7 @@ package hub
 
 import (
 	"fmt"
+	"log"
 	"squawkmarketbackend/db"
 	"squawkmarketbackend/models"
 
@@ -29,10 +30,15 @@ func (h *AppHub) Broadcast(message string) {
 
 // feed name and target event are the same
 func BroadcastSquawk(server signalr.Server, feedName string, squawk models.Squawk) {
+	log.Println("BROADCASTING SQUAWK TO FEED: ")
+	// dumps squawk to log
+	log.Println(squawk)
 	server.HubClients().Group(feedName).Send(feedName, squawk)
 }
 
 func (h *AppHub) AddToGroup(group string, connectionID string) {
+	log.Println("PERSON JOINING! " + connectionID)
+	log.Println("GROUP: " + group)
 	h.Groups().AddToGroup(group, connectionID)
 
 	// send them the latest squawk by the feed they just subscribed to

@@ -213,6 +213,14 @@ var FinvizMostVolatileConfig = ScrapingConfig{
 	InsertThreshold: 0.90,
 }
 
+var FinvizSectorConfig = ScrapingConfig{
+	Url:             "https://finviz.com/groups.ashx?g=sector&v=112",
+	Selector:        ".table-light",
+	HandlerFunction: handlers.SectorHandler,
+	FeedName:        "market-wide",
+	InsertThreshold: 0.90,
+}
+
 var YahooSAndPFuturesConfig = ScrapingConfig{
 	Url:             "https://finance.yahoo.com",
 	Selector:        "a[title~='S&P']",
@@ -300,7 +308,7 @@ var HeadlineScrapingConfigs = []ScrapingConfig{
 }
 
 // finviz scrapes
-var FinvizScrapingConfigs = []ScrapingConfig{
+var FinvizTechnicalIndicatorsScrapingConfigs = []ScrapingConfig{
 	FinvizTopGainersConfig,
 	FinvizTopLosersConfig,
 	FinvizNewHighConfig,

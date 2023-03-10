@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"log"
+	"os"
 	"squawkmarketbackend/amazontexttospeech"
 	"squawkmarketbackend/db"
 	"squawkmarketbackend/hub"
@@ -51,6 +52,12 @@ func ScrapeForConfigs(server signalr.Server, scrapingConfigs []scraperTypes.Scra
 }
 
 func IsItTimeToScrape() bool {
+
+	if os.Getenv("ENVIRONMENT") != "production" {
+		log.Println("Not in production, so we are always scraping")
+		return true
+	}
+
 	est, err := time.LoadLocation("America/New_York")
 	if err != nil {
 		log.Println(err)
@@ -89,7 +96,7 @@ func GenerateAndStoreFeedItemIfNotExists(squawk string, symbols string, feedName
 		return
 	}
 	if squawkExists {
-		log.Println("Squawk already exists in database, not generating mp3 or broadcasting")
+		// log.Println("Squawk already exists in database, not generating mp3 or broadcasting")
 		return
 	}
 

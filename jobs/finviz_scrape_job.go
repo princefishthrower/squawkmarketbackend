@@ -10,9 +10,9 @@ import (
 )
 
 func StartFinvizScrapeJob(server signalr.Server) {
-	log.Println("Starting Finviz Scrape Job")
+	log.Println("Starting Finviz Technical Indicators Scrape Job")
 	// start in a goroutine so it doesn't block
 	go func() {
-		scraper.ScrapeForConfigs(server, scraperTypes.FinvizScrapingConfigs, 10*time.Second)
+		scraper.ScrapeForConfigs(server, scraperTypes.FinvizTechnicalIndicatorsScrapingConfigs, 10*time.Second)
 	}()
 }

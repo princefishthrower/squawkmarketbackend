@@ -43,7 +43,7 @@ source .env.sh && docker build -t squawkmarketbackend:latest .
 Then to run it:
 
 ```shell
-docker run --name squawkmarketbackend -d -p 8080:8080 squawkmarketbackend:latest
+docker run --name squawkmarketbackend -d -p 8080:8080 -v "/root/volumes:/app/volumes" squawkmarketbackend
 ```
 
 ## Build Docker for Managed Server / Cloud

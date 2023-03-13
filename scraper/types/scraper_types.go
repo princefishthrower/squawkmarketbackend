@@ -34,6 +34,10 @@ var AllowedDomains = []string{
 	"www.benzinga.com",
 	"fortune.com",
 	"www.fortune.com",
+	"nasdaqtrader.com",
+	"www.nasdaqtrader.com",
+	"federalreserve.gov",
+	"www.federalreserve.gov",
 }
 
 type ScrapingConfig struct {

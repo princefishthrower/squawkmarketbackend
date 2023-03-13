@@ -32,6 +32,42 @@ func CreateTDAmeritradeSocket(streamerSocketUrl string) (*websocket.Conn, error)
 	return websocketConn, nil
 }
 
+func ConnectToTDAmeritradeWithExpressConnection(userPrincipalsString string) (*websocket.Conn, *int, *tdameritradeTypes.UserPrincipals, error) {
+	userPrincipals := tdameritradeTypes.UserPrincipals{}
+
+	// marshall into a struct
+	err := json.Unmarshal([]byte(userPrincipalsString), &userPrincipals)
+	if err != nil {
+		log.Println(err)
+		return nil, nil, nil, err
+	}
+
+	// create TD Ameritrade socket connection
+	conn, err := CreateTDAmeritradeSocket(userPrincipals.StreamerInfo.StreamerSocketUrl)
+	if err != nil {
+		log.Println(err)
+		return nil, nil, nil, err
+	}
+
+	// login to the socket connection
+	requestId := 1
+	err = Login(requestId, *conn, userPrincipals)
+	if err != nil {
+		log.Println(err)
+		return nil, nil, nil, err
+	}
+
+	// set express connection on the socket connection
+	requestId += 1
+	err = SetExpressConnection(requestId, *conn, userPrincipals)
+	if err != nil {
+		log.Println(err)
+		return nil, nil, nil, err
+	}
+
+	return conn, &requestId, &userPrincipals, nil
+}
+
 func Login(requestID int, conn websocket.Conn, userPrincipals tdameritradeTypes.UserPrincipals) error {
 
 	tokenTimeStampAsDateObj, err := time.Parse("2006-01-02T15:04:05-0700", userPrincipals.StreamerInfo.TokenTimestamp)

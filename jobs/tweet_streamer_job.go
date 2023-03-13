@@ -10,8 +10,11 @@ import (
 
 func StartTweetStreamerJob(server signalr.Server, est *time.Location) {
 	log.Println("Starting Tweet Streamer Job")
-	// at minute intervals get change in sectors
 	go func() {
+		// get tweets from financialjuice
 		twitter.StreamTweetsOfUser("financialjuice")
+
+		// also from FirstSquawk
+		twitter.StreamTweetsOfUser("FirstSquawk")
 	}()
 }

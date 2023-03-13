@@ -15,7 +15,7 @@ func StartMarketClosedJob(server signalr.Server, est *time.Location) {
 	feedName := "market-wide"
 	c := cron.New(cron.WithLocation(est))
 
-	// run postmarket cron every weekday at 5:00pm EST
+	// run postmarket cron every weekday at 4:00pm EST
 	c.AddFunc("16 0 * * 1-5", func() {
 
 		// generate premarket message

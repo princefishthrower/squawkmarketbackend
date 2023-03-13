@@ -18,6 +18,7 @@ require (
 	github.com/antchfx/htmlquery v1.2.3 // indirect
 	github.com/antchfx/xmlquery v1.2.4 // indirect
 	github.com/antchfx/xpath v1.1.8 // indirect
+	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
@@ -63,5 +64,6 @@ require (
 	github.com/sashabaranov/go-openai v1.4.1
 	github.com/stripe/stripe-go/v72 v72.122.0
 	github.com/supabase/postgrest-go v0.0.7
+	github.com/tebeka/selenium v0.9.9
 	golang.org/x/net v0.7.0 // indirect
 )

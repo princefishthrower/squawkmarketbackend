@@ -10,45 +10,8 @@ import (
 	tdameritradeTypes "squawkmarketbackend/tdameritrade/types"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/philippseith/signalr"
 )
-
-func ConnectToTDAmeritradeWithExpressConnection(userPrincipalsString string) (*websocket.Conn, *int, *tdameritradeTypes.UserPrincipals, error) {
-	userPrincipals := tdameritradeTypes.UserPrincipals{}
-
-	// marshall into a struct
-	err := json.Unmarshal([]byte(userPrincipalsString), &userPrincipals)
-	if err != nil {
-		log.Println(err)
-		return nil, nil, nil, err
-	}
-
-	// create TD Ameritrade socket connection
-	conn, err := tdameritrade.CreateTDAmeritradeSocket(userPrincipals.StreamerInfo.StreamerSocketUrl)
-	if err != nil {
-		log.Println(err)
-		return nil, nil, nil, err
-	}
-
-	// login to the socket connection
-	requestId := 1
-	err = tdameritrade.Login(requestId, *conn, userPrincipals)
-	if err != nil {
-		log.Println(err)
-		return nil, nil, nil, err
-	}
-
-	// set express connection on the socket connection
-	requestId += 1
-	err = tdameritrade.SetExpressConnection(requestId, *conn, userPrincipals)
-	if err != nil {
-		log.Println(err)
-		return nil, nil, nil, err
-	}
-
-	return conn, &requestId, &userPrincipals, nil
-}
 
 func StartListenToSymbolsJob(server signalr.Server, est *time.Location) {
 	// run in go routine
@@ -57,11 +20,12 @@ func StartListenToSymbolsJob(server signalr.Server, est *time.Location) {
 		userPrincipalsString := os.Getenv("TD_AMERITRADE_USER_PRINCIPALS")
 
 		// connect to TD Ameritrade
-		conn, requestId, userPrincipals, err := ConnectToTDAmeritradeWithExpressConnection(userPrincipalsString)
+		conn, requestId, userPrincipals, err := tdameritrade.ConnectToTDAmeritradeWithExpressConnection(userPrincipalsString)
 		if err != nil {
 			log.Println(err)
 			return
 		}
+		defer conn.Close()
 
 		// send request to listen to $SPX.X
 		*requestId += 1
@@ -71,8 +35,9 @@ func StartListenToSymbolsJob(server signalr.Server, est *time.Location) {
 			return
 		}
 
-		// logic on receiving a message
+		// loop forever listening for messages
 		for {
+			// logic on receiving a message
 			_, message, err := conn.ReadMessage()
 			if err != nil {
 				log.Println("read:", err)

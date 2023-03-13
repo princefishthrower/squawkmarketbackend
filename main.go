@@ -88,6 +88,9 @@ func RunServer() {
 	// sector job
 	jobs.StartSectorJob(server, est)
 
+	// fear and greed job
+	jobs.FearAndGreedJob(server, est)
+
 	// create a new http.ServerMux to handle your app's http requests
 	router := http.NewServeMux()
 

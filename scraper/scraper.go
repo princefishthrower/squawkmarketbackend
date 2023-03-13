@@ -15,12 +15,12 @@ import (
 
 func ScrapeForConfigs(server signalr.Server, scrapingConfigs []scraperTypes.ScrapingConfig, duration time.Duration) {
 	// if it is not between 8am and 5pm EST, don't scrape
-	if !IsItTimeToScrape() {
-		log.Println("It is not time to scrape, sleeping for 1 minute")
-		time.Sleep(1 * time.Minute)
-		ScrapeForConfigs(server, scrapingConfigs, duration)
-		return
-	}
+	// if !IsItTimeToScrape() {
+	// 	log.Println("It is not time to scrape, sleeping for 1 minute")
+	// 	time.Sleep(1 * time.Minute)
+	// 	ScrapeForConfigs(server, scrapingConfigs, duration)
+	// 	return
+	// }
 
 	for _, config := range scrapingConfigs {
 		// get the squawks from the config

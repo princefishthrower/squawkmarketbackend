@@ -3,3 +3,5 @@
 squawk-market-credentials.json
 volumes/squawkmarketbackend.db
 .aws
+tests/audio.mp3
+audio.mp3

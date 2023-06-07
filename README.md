@@ -1,6 +1,6 @@
 # squawkmarketbackend
 
-The go based backend for the squawkmarket app. A sub-second latency stock market squawk box.
+The Go-based backend for the Squawk Market web app. A sub-second latency stock market squawk box.
 
 ## Run Tests
 

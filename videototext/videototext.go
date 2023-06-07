@@ -24,7 +24,7 @@ func YoutubeVideoIdToText(youtubeVideoId string) error {
 	}
 
 	// convert audio file to text
-	// open ai cost is $0.006 per minute of audio - i.e. $0.36 per hour
+	// open ai cost is $0.006 per minute of audio - i.e. $0.36 per hour of audio
 	text, err := open_ai.SpeechToText(fileName)
 	if err != nil {
 		return err
